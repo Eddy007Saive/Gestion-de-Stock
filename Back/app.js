@@ -5,6 +5,8 @@ const app = express();
 const venteRoute=require("./routes/venteRoute")
 const produitRoute=require("./routes/produitRoute")
 const fournisseurRoute=require("./routes/fournisseurRoute")
+const stockRoute=require("./routes/stockRoute")
+
 
 
 // Options CORS
@@ -26,6 +28,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/', fournisseurRoute);
 app.use('/api/', produitRoute);
 app.use('/api/', venteRoute);
+app.use('/api/', stockRoute);
+
 
 // Test CORS sur la route principale
 app.get('/', (req, res) => {

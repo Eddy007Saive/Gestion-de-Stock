@@ -104,6 +104,7 @@ class ProduitController{
             res.status(500).json({ message: "Erreur lors de la suppression du Produit" });
         }
     }
+
 }
 
 module.exports=new ProduitController();
