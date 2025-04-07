@@ -9618,7 +9618,7 @@ var require_utils = __commonJS({
       if (decode)
         return decode(data, hint);
     }
-    function basename2(path2) {
+    function basename(path2) {
       if (typeof path2 !== "string")
         return "";
       for (let i = path2.length - 1; i >= 0; --i) {
@@ -10923,7 +10923,7 @@ var require_utils = __commonJS({
       -1
     ];
     module.exports = {
-      basename: basename2,
+      basename,
       convertToUTF8,
       getDecoder,
       parseContentType,
@@ -11336,7 +11336,7 @@ var require_multipart = __commonJS({
     var { Readable, Writable } = __require("stream");
     var StreamSearch = require_sbmh();
     var {
-      basename: basename2,
+      basename,
       convertToUTF8,
       getDecoder,
       parseContentType,
@@ -11555,7 +11555,7 @@ var require_multipart = __commonJS({
         const partsLimit = limits && typeof limits.parts === "number" ? limits.parts : Infinity;
         let parts = -1;
         let fields = 0;
-        let files2 = 0;
+        let files = 0;
         let skipPart = false;
         this._fileEndsLeft = 0;
         this._fileStream = void 0;
@@ -11600,7 +11600,7 @@ var require_multipart = __commonJS({
             else if (disp.params.filename)
               filename = disp.params.filename;
             if (filename !== void 0 && !preservePath)
-              filename = basename2(filename);
+              filename = basename(filename);
           }
           if (header["content-type"]) {
             const conType = parseContentType(header["content-type"][0]);
@@ -11613,7 +11613,7 @@ var require_multipart = __commonJS({
           if (header["content-transfer-encoding"])
             partEncoding = header["content-transfer-encoding"][0].toLowerCase();
           if (partType === "application/octet-stream" || filename !== void 0) {
-            if (files2 === filesLimit) {
+            if (files === filesLimit) {
               if (!hitFilesLimit) {
                 hitFilesLimit = true;
                 this.emit("filesLimit");
@@ -11621,7 +11621,7 @@ var require_multipart = __commonJS({
               skipPart = true;
               return;
             }
-            ++files2;
+            ++files;
             if (this.listenerCount("file") === 0) {
               skipPart = true;
               return;
@@ -13431,7 +13431,7 @@ var require_make_middleware = __commonJS({
 var require_mkdirp = __commonJS({
   "node_modules/mkdirp/index.js"(exports, module) {
     var path2 = __require("path");
-    var fs2 = __require("fs");
+    var fs = __require("fs");
     var _0777 = parseInt("0777", 8);
     module.exports = mkdirP.mkdirp = mkdirP.mkdirP = mkdirP;
     function mkdirP(p, opts, f, made) {
@@ -13442,7 +13442,7 @@ var require_mkdirp = __commonJS({
         opts = { mode: opts };
       }
       var mode = opts.mode;
-      var xfs = opts.fs || fs2;
+      var xfs = opts.fs || fs;
       if (mode === void 0) {
         mode = _0777;
       }
@@ -13481,7 +13481,7 @@ var require_mkdirp = __commonJS({
         opts = { mode: opts };
       }
       var mode = opts.mode;
-      var xfs = opts.fs || fs2;
+      var xfs = opts.fs || fs;
       if (mode === void 0) {
         mode = _0777;
       }
@@ -13518,7 +13518,7 @@ var require_mkdirp = __commonJS({
 // node_modules/multer/storage/disk.js
 var require_disk = __commonJS({
   "node_modules/multer/storage/disk.js"(exports, module) {
-    var fs2 = __require("fs");
+    var fs = __require("fs");
     var os = __require("os");
     var path2 = __require("path");
     var crypto4 = __require("crypto");
@@ -13549,7 +13549,7 @@ var require_disk = __commonJS({
         that.getFilename(req, file, function(err2, filename) {
           if (err2) return cb2(err2);
           var finalPath = path2.join(destination, filename);
-          var outStream = fs2.createWriteStream(finalPath);
+          var outStream = fs.createWriteStream(finalPath);
           file.stream.pipe(outStream);
           outStream.on("error", cb2);
           outStream.on("finish", function() {
@@ -13568,7 +13568,7 @@ var require_disk = __commonJS({
       delete file.destination;
       delete file.filename;
       delete file.path;
-      fs2.unlink(path3, cb2);
+      fs.unlink(path3, cb2);
     };
     module.exports = function(opts) {
       return new DiskStorage(opts);
@@ -16487,15 +16487,15 @@ var require_pg_connection_string = __commonJS({
       if (config2.sslcert || config2.sslkey || config2.sslrootcert || config2.sslmode) {
         config2.ssl = {};
       }
-      const fs2 = config2.sslcert || config2.sslkey || config2.sslrootcert ? __require("fs") : null;
+      const fs = config2.sslcert || config2.sslkey || config2.sslrootcert ? __require("fs") : null;
       if (config2.sslcert) {
-        config2.ssl.cert = fs2.readFileSync(config2.sslcert).toString();
+        config2.ssl.cert = fs.readFileSync(config2.sslcert).toString();
       }
       if (config2.sslkey) {
-        config2.ssl.key = fs2.readFileSync(config2.sslkey).toString();
+        config2.ssl.key = fs.readFileSync(config2.sslkey).toString();
       }
       if (config2.sslrootcert) {
-        config2.ssl.ca = fs2.readFileSync(config2.sslrootcert).toString();
+        config2.ssl.ca = fs.readFileSync(config2.sslrootcert).toString();
       }
       switch (config2.sslmode) {
         case "disable": {
@@ -63788,7 +63788,7 @@ var require_postgres = __commonJS({
 var require_connection_manager7 = __commonJS({
   "node_modules/sequelize/lib/dialects/sqlite/connection-manager.js"(exports, module) {
     "use strict";
-    var fs2 = __require("fs");
+    var fs = __require("fs");
     var path2 = __require("path");
     var AbstractConnectionManager = require_connection_manager();
     var { logger } = require_logger();
@@ -63833,7 +63833,7 @@ var require_connection_manager7 = __commonJS({
           return this.connections[options.inMemory || options.uuid];
         }
         if (!options.inMemory && (options.readWriteMode & this.lib.OPEN_CREATE) !== 0) {
-          fs2.mkdirSync(path2.dirname(options.storage), { recursive: true });
+          fs.mkdirSync(path2.dirname(options.storage), { recursive: true });
         }
         const connection = await new Promise((resolve, reject2) => {
           this.connections[options.inMemory || options.uuid] = new this.lib.Database(options.storage, options.readWriteMode, (err) => {
@@ -68398,8 +68398,8 @@ var import_multer = __toESM(require_multer(), 1);
 import { Router as Router2 } from "express";
 
 // src/database/models/index.js
-import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
 // node_modules/sequelize/lib/index.mjs
 var import_index2 = __toESM(require_lib5(), 1);
@@ -68501,38 +68501,141 @@ var ValidationErrorItemType = import_index2.default.ValidationErrorItemType;
 
 // src/database/models/index.js
 import process2 from "process";
-import { fileURLToPath } from "url";
 
-// src/config/config.json
-var config_default = {
-  development: {
-    username: "root",
-    password: "12345",
-    database: "GStock",
-    host: "127.0.0.1",
-    dialect: "mysql"
-  },
-  test: {
-    username: "root",
-    password: null,
-    database: "database_test",
-    host: "127.0.0.1",
-    dialect: "mysql"
-  },
-  production: {
-    username: "root",
-    password: null,
-    database: "database_production",
-    host: "127.0.0.1",
-    dialect: "mysql"
+// src/database/models/produit.js
+var produit_default = (sequelize2) => {
+  class Produit extends Model {
+    static associate(models) {
+      Produit.belongsTo(models.Fournisseur, {
+        foreignKey: "fournisseurId",
+        as: "fournisseur"
+      });
+      Produit.hasOne(models.Stock, {
+        foreignKey: "produitId",
+        as: "stock"
+      });
+    }
   }
+  Produit.init(
+    {
+      nom: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: {
+          args: true,
+          msg: "Le produit existe d\xE9j\xE0"
+        },
+        validate: {
+          notEmpty: {
+            msg: "Le nom du produit ne peut pas \xEAtre vide"
+          },
+          len: {
+            args: [3, 100],
+            msg: "Le nom du produit doit avoir entre 3 et 100 caract\xE8res"
+          }
+        }
+      },
+      prix: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          isInt: {
+            msg: "Le prix doit \xEAtre un nombre entier"
+          },
+          min: {
+            args: [1],
+            msg: "Le prix doit \xEAtre positif"
+          }
+        }
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "La description ne peut pas \xEAtre vide"
+          },
+          len: {
+            args: [10, 500],
+            msg: "La description doit avoir entre 10 et 500 caract\xE8res"
+          }
+        }
+      },
+      fournisseurId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          isInt: {
+            msg: "Le fournisseurId doit \xEAtre un nombre entier"
+          }
+        }
+      },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true
+      }
+    },
+    {
+      sequelize: sequelize2,
+      modelName: "Produit",
+      hooks: {
+        beforeSave: (produit) => {
+          produit.nom = produit.nom.toUpperCase();
+        }
+      }
+    }
+  );
+  return Produit;
+};
+
+// src/database/models/stock.js
+var stock_default = (sequelize2) => {
+  class Stock2 extends Model {
+    static associate(models) {
+      Stock2.belongsTo(models.Produit, {
+        foreignKey: "produitId",
+        as: "produit"
+      });
+    }
+  }
+  Stock2.init(
+    {
+      quantite: DataTypes.INTEGER,
+      produitId: DataTypes.INTEGER,
+      type_mouvement: DataTypes.STRING,
+      date_stock: DataTypes.DATE
+    },
+    {
+      sequelize: sequelize2,
+      modelName: "Stock"
+    }
+  );
+  return Stock2;
+};
+
+// src/database/models/fournisseur.js
+var fournisseur_default = (sequelize2, DataTypes2) => {
+  class Fournisseur2 extends Model {
+    static associate(models) {
+      Fournisseur2.hasMany(models.Produit, { foreignKey: "fournisseurId", as: "Produits" });
+    }
+  }
+  Fournisseur2.init({
+    nom: DataTypes2.STRING,
+    contact: DataTypes2.STRING
+  }, {
+    sequelize: sequelize2,
+    modelName: "Fournisseur"
+  });
+  return Fournisseur2;
 };
 
 // src/database/models/index.js
 var __filename = fileURLToPath(import.meta.url);
-var basename = path.basename(__filename);
+var __dirname = path.dirname(__filename);
 var env = process2.env.NODE_ENV || "development";
-var config = config_default[env];
+var rootDir = path.resolve(__dirname, "..");
+var config = __require(path.join(rootDir, "src/config/config.json"))[env];
 var db = {};
 var sequelize;
 if (config.use_env_variable) {
@@ -68540,20 +68643,15 @@ if (config.use_env_variable) {
 } else {
   sequelize = new lib_default(config.database, config.username, config.password, config);
 }
-var files = fs.readdirSync(path.dirname(__filename)).filter((file) => {
-  return file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js" && file.indexOf(".test.js") === -1;
-});
-for (const file of files) {
-  const modelPath = path.join(path.dirname(__filename), file);
-  const modelModule = await import(modelPath);
-  const model = modelModule.default(sequelize, lib_default.DataTypes);
-  db[model.name] = model;
-}
+db.Produit = produit_default(sequelize, lib_default.DataTypes);
+db.Stock = stock_default(sequelize, lib_default.DataTypes);
+db.Fournisseur = fournisseur_default(sequelize, lib_default.DataTypes);
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
+console.log("Cl\xE9s dans db apr\xE8s chargement des mod\xE8les :", Object.keys(db));
 db.sequelize = sequelize;
 db.Sequelize = lib_default;
 var models_default = db;
@@ -68562,7 +68660,6 @@ var models_default = db;
 var ProduitController = class {
   async getAllProduits(req, res) {
     try {
-      console.log(models_default.Produit);
       const Produits = await models_default.Produit.findAll({
         include: [
           {

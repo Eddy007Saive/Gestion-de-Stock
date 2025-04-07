@@ -28,6 +28,7 @@
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
+    "esbuild": "^0.25.2",
     "nodemon": "^3.1.9",
     "sequelize-cli": "^6.6.2"
   }

@@ -1,11 +1,9 @@
-// Importation directe du module db
-import db from "@/database/models"; // Ajustez le chemin selon votre structure de dossiers
-
+import db from "@/database/models";
 class ProduitController {
+
     async getAllProduits(req, res) {
         try {
-            console.log(db);
-            // Accès au modèle via l'objet db
+          
             const Produits = await db.Produit.findAll({
                 include: [
                     {
