@@ -3,7 +3,6 @@ class ProduitController {
 
     async getAllProduits(req, res) {
         try {
-          
             const Produits = await db.Produit.findAll({
                 include: [
                     {
@@ -47,7 +46,8 @@ class ProduitController {
             await db.Stock.create(
                 {
                     produitId: produit.id,
-                    quantite: quantiteInitiale
+                    quantite: quantiteInitiale,
+                    type:"Entree"
                 },
                 { transaction }
             );

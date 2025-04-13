@@ -4,6 +4,12 @@ import Sequelize from 'sequelize';
 import process from 'process';
 import Produit from '@/database/models/produit.js';
 import Stock from '@/database/models/stock.js';
+import Categorie from '@/database/models/categorie.js';
+import Vente from '@/database/models/vente.js';
+import Ventedetail from '@/database/models/ventedetail.js';
+
+
+
 import Fournisseur from '@/database/models/fournisseur.js'; // Ajoute les autres modèles ici si nécessaire
 
 // Utilisation de import.meta.url pour obtenir le répertoire du fichier actuel
@@ -24,9 +30,14 @@ if (config.use_env_variable) {
 }
 
 // Ajout des modèles dans l'objet db
+db.Categorie = Categorie(sequelize, Sequelize.DataTypes);
 db.Produit = Produit(sequelize, Sequelize.DataTypes);
 db.Stock = Stock(sequelize, Sequelize.DataTypes);
 db.Fournisseur = Fournisseur(sequelize, Sequelize.DataTypes);
+db.Vente = Vente(sequelize, Sequelize.DataTypes);
+db.Ventedetail = Ventedetail(sequelize, Sequelize.DataTypes);
+
+
 
 // Gestion des associations
 Object.keys(db).forEach(modelName => {

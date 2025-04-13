@@ -6,4 +6,7 @@ export const ProduitSchema = yup.object().shape({
     description:  yup.string(),
     qte:yup.number(),
     fournisseurId: yup.number().required(),
+    categorieId: yup.number().required(),
+    seuilAlerte:yup.number().required()
+
 });

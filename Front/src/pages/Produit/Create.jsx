@@ -13,6 +13,8 @@ import { ProduitSchema } from "@/validations/ProduitSchema";
 export function Create() {
   const [produits, setProduits] = useState([]);
   const [fournisseurs, setFournisseur] = useState([]);
+  const [categories, setCategorie] = useState([]);
+
 
   const [image, setImage] = useState(null);
   const [formData, setFormData] = useState({
@@ -20,13 +22,16 @@ export function Create() {
     prix: "",
     description: "",
     fournisseurId: "",
+    categorieId:"",
     image: "",
     qte:"",
+    seuilAlerte:0
   });
 
   useEffect(() => {
     fetchProduits();
-    // fecthFournisseurs();
+    fecthFournisseurs();
+    fetchCategorie();
   }, []);
 
   const fetchProduits = async () => {
@@ -38,6 +43,12 @@ export function Create() {
   const fecthFournisseurs = async () => {
     const response = await getFournisseurs();
     setFournisseur(response.data);
+    
+  };
+
+  const fetchCategorie = async () => {
+    const response = await getFournisseurs();
+    setCategorie(response.data);
     
   };
 
@@ -169,6 +180,27 @@ export function Create() {
                   </div>
 
                   <div>
+                    <label className="block mb-2 text-sm font-medium">Categorie</label>
+                    <select
+                        name="categorieId"
+                        id="categorieId"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        {...register("categorieId")}
+                        onChange={handleChange}
+                        value={formData.categorieId}
+                      >
+                        <option value="">Sélectionner un categorie</option>
+                        {categories.map((categorie) => (
+                          <option key={categorie.id} value={categorie.id}>
+                            {categorie.nom}
+                          </option>
+                        ))}
+                      </select>
+
+                    {errors.categorie && <p className="text-red-500 text-xs">{errors.categorie.message}</p>}
+                  </div>
+
+                  <div>
                     <label className="block mb-2 text-sm font-medium">Prix</label>
                     <input
                       {...register("prix")}
@@ -179,6 +211,19 @@ export function Create() {
                       onChange={handleChange}
                     />
                     {errors.prix && <p className="text-red-500 text-xs">{errors.prix.message}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block mb-2 text-sm font-medium">seuilAlerte</label>
+                    <input
+                      {...register("seuilAlerte")}
+                      value={formData.seuilAlerte}
+                      name="seuilAlerte"
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      onChange={handleChange}
+                    />
+                    {errors.seuilAlerte && <p className="text-red-500 text-xs">{errors.seuilAlerte.message}</p>}
                   </div>
 
                   <div>
@@ -193,6 +238,8 @@ export function Create() {
                     />
                     {errors.qte && <p className="text-red-500 text-xs">{errors.qte.message}</p>}
                   </div>
+
+                 
 
                   <div className="col-span-2">
                     <label className="block mb-2 text-sm font-medium">Description</label>

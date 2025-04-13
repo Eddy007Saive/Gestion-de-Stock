@@ -13,6 +13,11 @@ export default (sequelize) => {
         foreignKey: 'produitId',
         as: 'stock',
       });
+      
+      Produit.belongsTo(models.Categorie,{
+        foreignKey:"categorieId",
+        as:"categorie"
+      })
     }
   }
 
@@ -74,6 +79,12 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+
+      categorieId: {
+        type:DataTypes.INTEGER,
+        allowNull: false,
+      
+      }
     },
     {
       sequelize,

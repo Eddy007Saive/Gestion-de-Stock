@@ -1,8 +1,8 @@
 
-      import { createRequire } from 'module';
-      const require = createRequire(import.meta.url);
-      global.require = require;
-    
+        import { createRequire } from 'module';
+        const require = createRequire(import.meta.url);
+        global.require = require;
+      
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -68514,6 +68514,10 @@ var produit_default = (sequelize2) => {
         foreignKey: "produitId",
         as: "stock"
       });
+      Produit.belongsTo(models.Categorie, {
+        foreignKey: "categorieId",
+        as: "categorie"
+      });
     }
   }
   Produit.init(
@@ -68573,6 +68577,10 @@ var produit_default = (sequelize2) => {
       image: {
         type: DataTypes.STRING,
         allowNull: true
+      },
+      categorieId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
       }
     },
     {
@@ -68613,6 +68621,86 @@ var stock_default = (sequelize2) => {
   return Stock2;
 };
 
+// src/database/models/categorie.js
+var categorie_default = (sequelize2) => {
+  class Categorie extends Model {
+    static associate(models) {
+      Categorie.hasMany(models.Produit, {
+        foreignKey: "categorieId"
+      });
+    }
+  }
+  Categorie.init({
+    nom: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: "La cat\xE9gorie existe d\xE9ja"
+      }
+    },
+    desription: {
+      type: DataTypes.STRING,
+      allowNull: true
+    }
+  }, {
+    sequelize: sequelize2,
+    modelName: "Categorie"
+  });
+  return Categorie;
+};
+
+// src/database/models/vente.js
+var vente_default = (sequelize2, DataTypes2) => {
+  class Vente2 extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      Vente2.associate = (models2) => {
+        Vente2.hasMany(models2.VenteDetail, { foreignKey: "venteId", as: "details" });
+      };
+    }
+  }
+  Vente2.init({
+    dateVente: DataTypes2.DATE,
+    total: DataTypes2.FLOAT
+  }, {
+    sequelize: sequelize2,
+    modelName: "Vente"
+  });
+  return Vente2;
+};
+
+// src/database/models/ventedetail.js
+var ventedetail_default = (sequelize2) => {
+  class VenteDetail2 extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      VenteDetail2.associate = (models2) => {
+        VenteDetail2.belongsTo(models2.Produit, { foreignKey: "produitId", as: "produit" });
+        VenteDetail2.belongsTo(models2.Vente, { foreignKey: "venteId", as: "vente" });
+      };
+    }
+  }
+  VenteDetail2.init({
+    quantite: DataTypes.INTEGER,
+    prixUnitaire: DataTypes.FLOAT,
+    produitId: DataTypes.INTEGER,
+    venteId: DataTypes.INTEGER
+  }, {
+    sequelize: sequelize2,
+    modelName: "VenteDetail"
+  });
+  return VenteDetail2;
+};
+
 // src/database/models/fournisseur.js
 var fournisseur_default = (sequelize2, DataTypes2) => {
   class Fournisseur2 extends Model {
@@ -68643,9 +68731,12 @@ if (config.use_env_variable) {
 } else {
   sequelize = new lib_default(config.database, config.username, config.password, config);
 }
+db.Categorie = categorie_default(sequelize, lib_default.DataTypes);
 db.Produit = produit_default(sequelize, lib_default.DataTypes);
 db.Stock = stock_default(sequelize, lib_default.DataTypes);
 db.Fournisseur = fournisseur_default(sequelize, lib_default.DataTypes);
+db.Vente = vente_default(sequelize, lib_default.DataTypes);
+db.Ventedetail = ventedetail_default(sequelize, lib_default.DataTypes);
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
@@ -68698,7 +68789,8 @@ var ProduitController = class {
       await models_default.Stock.create(
         {
           produitId: produit.id,
-          quantite: quantiteInitiale
+          quantite: quantiteInitiale,
+          type: "Entree"
         },
         { transaction }
       );

@@ -1,4 +1,4 @@
-import { build } from 'esbuild';
+import esbuild from 'esbuild';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -7,23 +7,29 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-build({
-  entryPoints: ['./src/app.js'],
-  bundle: true,
-  platform: 'node',
-  format: 'esm',  // Gardez ESM
-  outfile: './dist/app.js',
-  sourcemap: true,
-  alias: {
-    '@': path.resolve(__dirname, 'src'),
-  },
-  external: ['express', 'body-parser', 'path', 'fs', 'url', 'depd'],
-  banner: {
-    js: `
-      import { createRequire } from 'module';
-      const require = createRequire(import.meta.url);
-      global.require = require;
-    `,
-  },
-  logLevel: 'info'
-}).catch(() => process.exit(1));
+async function  build(){
+  const ctx = await esbuild.context({
+    entryPoints: ['./src/app.js'],
+    bundle: true,
+    platform: 'node',
+    format: 'esm',  // Gardez ESM
+    outfile: './dist/app.js',
+    sourcemap: true,
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+    external: ['express', 'body-parser', 'path', 'fs', 'url', 'depd'],
+    banner: {
+      js: `
+        import { createRequire } from 'module';
+        const require = createRequire(import.meta.url);
+        global.require = require;
+      `,
+    },
+    logLevel: 'info'
+})
+    await ctx.watch();
+    console.log('🔁 Watching for changes...');
+}
+
+build().catch(() => process.exit(1));
