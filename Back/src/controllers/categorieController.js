@@ -1,9 +1,9 @@
 import db from "@/database/models"; // Ajustez le chemin selon votre structure de dossiers
 
-class FournisseurController {
+class CategorieController {
     async getAllFournisseurs(req, res) {
         try {
-            const fournisseurs = await db.Fournisseur.findAll();
+            const fournisseurs = await db.Categorie.findAll();
             res.json(fournisseurs);
         } catch (error) {
             console.error(error);
@@ -13,7 +13,7 @@ class FournisseurController {
 
     async create(req, res) {
         try {
-            const fournisseur = await db.Fournisseur.create(req.body);
+            const fournisseur = await db.Categorie.create(req.body);
             res.json(fournisseur);
         } catch (error) {
             console.error(error);
@@ -23,7 +23,7 @@ class FournisseurController {
 
     async update(req, res) {
         try {
-            const fournisseur = await Fournisseur.findByPk(req.params.id);
+            const fournisseur = await db.Categorie.findByPk(req.params.id);
             if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
             await fournisseur.update(req.body);
             res.json(fournisseur);
@@ -35,7 +35,7 @@ class FournisseurController {
 
     async delete(req, res) {
         try {
-            const fournisseur = await Fournisseur.findByPk(req.params.id);
+            const fournisseur = await db.Categorie.findByPk(req.params.id);
             if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
             await fournisseur.destroy();
             res.json({ message: "Fournisseur supprimé" });
@@ -46,4 +46,4 @@ class FournisseurController {
     }
 }
 
-export default new FournisseurController(); // Utilisation de export default pour exporter la classe
+export default new CategorieController(); // Utilisation de export default pour exporter la classe
