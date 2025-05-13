@@ -32,6 +32,12 @@ export const routeS = [
         name: "Fournisseur",
         path: "/fournisseur", // Chemin complet avec /dashboard
       },
+
+      {
+        icon: <TruckIcon {...icon} />,
+        name: "Categorie",
+        path: "/categorie", // Chemin complet avec /dashboard
+      },
       {
         icon: <MapPinIcon {...icon} />,
         name: "Approvissionement",

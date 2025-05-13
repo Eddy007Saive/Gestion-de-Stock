@@ -1,13 +1,13 @@
 import apiClient from "@/utils/ApiClient";
-const url="/produit"
+const url="/produits"
 
 // Fonction pour récupérer tous les utilisateurs
-export const getProduits = () => apiClient.get(`${url}s`);
+export const getProduits = () => apiClient.get(`${url}`);
 
 export const findProduit =async  (id) =>{
     try {
         const response=await apiClient.get(`${url}/${id}`)
-        return response.data
+        return response
     } catch (error) {
         console.log(error);
     }
@@ -15,7 +15,7 @@ export const findProduit =async  (id) =>{
 // Fonction pour créer un utilisateur
 export const createProduit = async (data, config) => {
     try {
-        const response = await apiClient.post(`${url}/create`, data, config);
+        const response = await apiClient.post(`${url}`, data, config);
         return response.data; 
     } catch (error) {
         if (error.response) {

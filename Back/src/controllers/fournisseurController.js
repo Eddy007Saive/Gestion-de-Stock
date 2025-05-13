@@ -1,7 +1,7 @@
 import db from "@/database/models"; // Ajustez le chemin selon votre structure de dossiers
 
 class FournisseurController {
-    async getAllFournisseurs(req, res) {
+    async getAll(req, res) {
         try {
             const fournisseurs = await db.Fournisseur.findAll();
             res.json(fournisseurs);
@@ -21,9 +21,20 @@ class FournisseurController {
         }
     }
 
+    async getById(req, res) {
+        try {
+            const fournisseur = await db.Fournisseur.findByPk(req.params.id);
+            if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
+            res.json(fournisseur);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Erreur lors de la récupération du fournisseur" });
+        }
+    }
+
     async update(req, res) {
         try {
-            const fournisseur = await Fournisseur.findByPk(req.params.id);
+            const fournisseur = await db.Fournisseur.findByPk(req.params.id);
             if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
             await fournisseur.update(req.body);
             res.json(fournisseur);
@@ -35,7 +46,7 @@ class FournisseurController {
 
     async delete(req, res) {
         try {
-            const fournisseur = await Fournisseur.findByPk(req.params.id);
+            const fournisseur = await db.Fournisseur.findByPk(req.params.id);
             if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
             await fournisseur.destroy();
             res.json({ message: "Fournisseur supprimé" });

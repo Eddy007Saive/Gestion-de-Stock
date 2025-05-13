@@ -9105,11 +9105,11 @@ var require_mime_types = __commonJS({
       }
       return exts[0];
     }
-    function lookup(path2) {
-      if (!path2 || typeof path2 !== "string") {
+    function lookup(path3) {
+      if (!path3 || typeof path3 !== "string") {
         return false;
       }
-      var extension2 = extname("x." + path2).toLowerCase().substr(1);
+      var extension2 = extname("x." + path3).toLowerCase().substr(1);
       if (!extension2) {
         return false;
       }
@@ -9618,19 +9618,19 @@ var require_utils = __commonJS({
       if (decode)
         return decode(data, hint);
     }
-    function basename(path2) {
-      if (typeof path2 !== "string")
+    function basename(path3) {
+      if (typeof path3 !== "string")
         return "";
-      for (let i = path2.length - 1; i >= 0; --i) {
-        switch (path2.charCodeAt(i)) {
+      for (let i = path3.length - 1; i >= 0; --i) {
+        switch (path3.charCodeAt(i)) {
           case 47:
           // '/'
           case 92:
-            path2 = path2.slice(i + 1);
-            return path2 === ".." || path2 === "." ? "" : path2;
+            path3 = path3.slice(i + 1);
+            return path3 === ".." || path3 === "." ? "" : path3;
         }
       }
-      return path2 === ".." || path2 === "." ? "" : path2;
+      return path3 === ".." || path3 === "." ? "" : path3;
     }
     var TOKEN = [
       0,
@@ -13430,7 +13430,7 @@ var require_make_middleware = __commonJS({
 // node_modules/mkdirp/index.js
 var require_mkdirp = __commonJS({
   "node_modules/mkdirp/index.js"(exports, module) {
-    var path2 = __require("path");
+    var path3 = __require("path");
     var fs = __require("fs");
     var _0777 = parseInt("0777", 8);
     module.exports = mkdirP.mkdirp = mkdirP.mkdirP = mkdirP;
@@ -13450,7 +13450,7 @@ var require_mkdirp = __commonJS({
       var cb2 = f || /* istanbul ignore next */
       function() {
       };
-      p = path2.resolve(p);
+      p = path3.resolve(p);
       xfs.mkdir(p, mode, function(er) {
         if (!er) {
           made = made || p;
@@ -13458,8 +13458,8 @@ var require_mkdirp = __commonJS({
         }
         switch (er.code) {
           case "ENOENT":
-            if (path2.dirname(p) === p) return cb2(er);
-            mkdirP(path2.dirname(p), opts, function(er2, made2) {
+            if (path3.dirname(p) === p) return cb2(er);
+            mkdirP(path3.dirname(p), opts, function(er2, made2) {
               if (er2) cb2(er2, made2);
               else mkdirP(p, opts, cb2, made2);
             });
@@ -13486,14 +13486,14 @@ var require_mkdirp = __commonJS({
         mode = _0777;
       }
       if (!made) made = null;
-      p = path2.resolve(p);
+      p = path3.resolve(p);
       try {
         xfs.mkdirSync(p, mode);
         made = made || p;
       } catch (err0) {
         switch (err0.code) {
           case "ENOENT":
-            made = sync(path2.dirname(p), opts, made);
+            made = sync(path3.dirname(p), opts, made);
             sync(p, opts, made);
             break;
           // In the case of any other error, just see if there's a dir
@@ -13520,7 +13520,7 @@ var require_disk = __commonJS({
   "node_modules/multer/storage/disk.js"(exports, module) {
     var fs = __require("fs");
     var os = __require("os");
-    var path2 = __require("path");
+    var path3 = __require("path");
     var crypto4 = __require("crypto");
     var mkdirp = require_mkdirp();
     function getFilename(req, file, cb2) {
@@ -13548,7 +13548,7 @@ var require_disk = __commonJS({
         if (err) return cb2(err);
         that.getFilename(req, file, function(err2, filename) {
           if (err2) return cb2(err2);
-          var finalPath = path2.join(destination, filename);
+          var finalPath = path3.join(destination, filename);
           var outStream = fs.createWriteStream(finalPath);
           file.stream.pipe(outStream);
           outStream.on("error", cb2);
@@ -13564,11 +13564,11 @@ var require_disk = __commonJS({
       });
     };
     DiskStorage.prototype._removeFile = function _removeFile(req, file, cb2) {
-      var path3 = file.path;
+      var path4 = file.path;
       delete file.destination;
       delete file.filename;
       delete file.path;
-      fs.unlink(path3, cb2);
+      fs.unlink(path4, cb2);
     };
     module.exports = function(opts) {
       return new DiskStorage(opts);
@@ -17951,11 +17951,11 @@ var require_lodash = __commonJS({
             return isFunction2(object2[key]);
           });
         }
-        function baseGet(object2, path2) {
-          path2 = castPath(path2, object2);
-          var index = 0, length = path2.length;
+        function baseGet(object2, path3) {
+          path3 = castPath(path3, object2);
+          var index = 0, length = path3.length;
           while (object2 != null && index < length) {
-            object2 = object2[toKey(path2[index++])];
+            object2 = object2[toKey(path3[index++])];
           }
           return index && index == length ? object2 : undefined2;
         }
@@ -18019,10 +18019,10 @@ var require_lodash = __commonJS({
           });
           return accumulator;
         }
-        function baseInvoke(object2, path2, args) {
-          path2 = castPath(path2, object2);
-          object2 = parent(object2, path2);
-          var func = object2 == null ? object2 : object2[toKey(last2(path2))];
+        function baseInvoke(object2, path3, args) {
+          path3 = castPath(path3, object2);
+          object2 = parent(object2, path3);
+          var func = object2 == null ? object2 : object2[toKey(last2(path3))];
           return func == null ? undefined2 : apply(func, object2, args);
         }
         function baseIsArguments(value) {
@@ -18178,13 +18178,13 @@ var require_lodash = __commonJS({
             return object2 === source || baseIsMatch(object2, source, matchData);
           };
         }
-        function baseMatchesProperty(path2, srcValue) {
-          if (isKey(path2) && isStrictComparable(srcValue)) {
-            return matchesStrictComparable(toKey(path2), srcValue);
+        function baseMatchesProperty(path3, srcValue) {
+          if (isKey(path3) && isStrictComparable(srcValue)) {
+            return matchesStrictComparable(toKey(path3), srcValue);
           }
           return function(object2) {
-            var objValue = get2(object2, path2);
-            return objValue === undefined2 && objValue === srcValue ? hasIn(object2, path2) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+            var objValue = get2(object2, path3);
+            return objValue === undefined2 && objValue === srcValue ? hasIn(object2, path3) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
           };
         }
         function baseMerge(object2, source, srcIndex, customizer, stack) {
@@ -18281,23 +18281,23 @@ var require_lodash = __commonJS({
           });
         }
         function basePick(object2, paths) {
-          return basePickBy(object2, paths, function(value, path2) {
-            return hasIn(object2, path2);
+          return basePickBy(object2, paths, function(value, path3) {
+            return hasIn(object2, path3);
           });
         }
         function basePickBy(object2, paths, predicate) {
           var index = -1, length = paths.length, result3 = {};
           while (++index < length) {
-            var path2 = paths[index], value = baseGet(object2, path2);
-            if (predicate(value, path2)) {
-              baseSet(result3, castPath(path2, object2), value);
+            var path3 = paths[index], value = baseGet(object2, path3);
+            if (predicate(value, path3)) {
+              baseSet(result3, castPath(path3, object2), value);
             }
           }
           return result3;
         }
-        function basePropertyDeep(path2) {
+        function basePropertyDeep(path3) {
           return function(object2) {
-            return baseGet(object2, path2);
+            return baseGet(object2, path3);
           };
         }
         function basePullAll(array, values3, iteratee3, comparator) {
@@ -18371,14 +18371,14 @@ var require_lodash = __commonJS({
           var array = values2(collection);
           return shuffleSelf(array, baseClamp(n, 0, array.length));
         }
-        function baseSet(object2, path2, value, customizer) {
+        function baseSet(object2, path3, value, customizer) {
           if (!isObject2(object2)) {
             return object2;
           }
-          path2 = castPath(path2, object2);
-          var index = -1, length = path2.length, lastIndex = length - 1, nested = object2;
+          path3 = castPath(path3, object2);
+          var index = -1, length = path3.length, lastIndex = length - 1, nested = object2;
           while (nested != null && ++index < length) {
-            var key = toKey(path2[index]), newValue = value;
+            var key = toKey(path3[index]), newValue = value;
             if (key === "__proto__" || key === "constructor" || key === "prototype") {
               return object2;
             }
@@ -18386,7 +18386,7 @@ var require_lodash = __commonJS({
               var objValue = nested[key];
               newValue = customizer ? customizer(objValue, key, nested) : undefined2;
               if (newValue === undefined2) {
-                newValue = isObject2(objValue) ? objValue : isIndex(path2[index + 1]) ? [] : {};
+                newValue = isObject2(objValue) ? objValue : isIndex(path3[index + 1]) ? [] : {};
               }
             }
             assignValue(nested, key, newValue);
@@ -18552,13 +18552,13 @@ var require_lodash = __commonJS({
             }
           return result3;
         }
-        function baseUnset(object2, path2) {
-          path2 = castPath(path2, object2);
-          object2 = parent(object2, path2);
-          return object2 == null || delete object2[toKey(last2(path2))];
+        function baseUnset(object2, path3) {
+          path3 = castPath(path3, object2);
+          object2 = parent(object2, path3);
+          return object2 == null || delete object2[toKey(last2(path3))];
         }
-        function baseUpdate(object2, path2, updater, customizer) {
-          return baseSet(object2, path2, updater(baseGet(object2, path2)), customizer);
+        function baseUpdate(object2, path3, updater, customizer) {
+          return baseSet(object2, path3, updater(baseGet(object2, path3)), customizer);
         }
         function baseWhile(array, predicate, isDrop, fromRight) {
           var length = array.length, index = fromRight ? length : -1;
@@ -19441,11 +19441,11 @@ var require_lodash = __commonJS({
           var match = source.match(reWrapDetails);
           return match ? match[1].split(reSplitDetails) : [];
         }
-        function hasPath(object2, path2, hasFunc) {
-          path2 = castPath(path2, object2);
-          var index = -1, length = path2.length, result3 = false;
+        function hasPath(object2, path3, hasFunc) {
+          path3 = castPath(path3, object2);
+          var index = -1, length = path3.length, result3 = false;
           while (++index < length) {
-            var key = toKey(path2[index]);
+            var key = toKey(path3[index]);
             if (!(result3 = object2 != null && hasFunc(object2, key))) {
               break;
             }
@@ -19647,8 +19647,8 @@ var require_lodash = __commonJS({
             return apply(func, this, otherArgs);
           };
         }
-        function parent(object2, path2) {
-          return path2.length < 2 ? object2 : baseGet(object2, baseSlice(path2, 0, -1));
+        function parent(object2, path3) {
+          return path3.length < 2 ? object2 : baseGet(object2, baseSlice(path3, 0, -1));
         }
         function reorder(array, indexes) {
           var arrLength = array.length, length = nativeMin(indexes.length, arrLength), oldArray = copyArray(array);
@@ -20283,10 +20283,10 @@ var require_lodash = __commonJS({
           }
           return isString(collection) ? fromIndex <= length && collection.indexOf(value, fromIndex) > -1 : !!length && baseIndexOf(collection, value, fromIndex) > -1;
         }
-        var invokeMap = baseRest(function(collection, path2, args) {
-          var index = -1, isFunc = typeof path2 == "function", result3 = isArrayLike(collection) ? Array2(collection.length) : [];
+        var invokeMap = baseRest(function(collection, path3, args) {
+          var index = -1, isFunc = typeof path3 == "function", result3 = isArrayLike(collection) ? Array2(collection.length) : [];
           baseEach(collection, function(value) {
-            result3[++index] = isFunc ? apply(path2, value, args) : baseInvoke(value, path2, args);
+            result3[++index] = isFunc ? apply(path3, value, args) : baseInvoke(value, path3, args);
           });
           return result3;
         });
@@ -20938,15 +20938,15 @@ var require_lodash = __commonJS({
         function functionsIn(object2) {
           return object2 == null ? [] : baseFunctions(object2, keysIn(object2));
         }
-        function get2(object2, path2, defaultValue) {
-          var result3 = object2 == null ? undefined2 : baseGet(object2, path2);
+        function get2(object2, path3, defaultValue) {
+          var result3 = object2 == null ? undefined2 : baseGet(object2, path3);
           return result3 === undefined2 ? defaultValue : result3;
         }
-        function has3(object2, path2) {
-          return object2 != null && hasPath(object2, path2, baseHas);
+        function has3(object2, path3) {
+          return object2 != null && hasPath(object2, path3, baseHas);
         }
-        function hasIn(object2, path2) {
-          return object2 != null && hasPath(object2, path2, baseHasIn);
+        function hasIn(object2, path3) {
+          return object2 != null && hasPath(object2, path3, baseHasIn);
         }
         var invert2 = createInverter(function(result3, value, key) {
           if (value != null && typeof value.toString != "function") {
@@ -20999,10 +20999,10 @@ var require_lodash = __commonJS({
             return result3;
           }
           var isDeep = false;
-          paths = arrayMap(paths, function(path2) {
-            path2 = castPath(path2, object2);
-            isDeep || (isDeep = path2.length > 1);
-            return path2;
+          paths = arrayMap(paths, function(path3) {
+            path3 = castPath(path3, object2);
+            isDeep || (isDeep = path3.length > 1);
+            return path3;
           });
           copyObject(object2, getAllKeysIn(object2), result3);
           if (isDeep) {
@@ -21028,19 +21028,19 @@ var require_lodash = __commonJS({
             return [prop];
           });
           predicate = getIteratee(predicate);
-          return basePickBy(object2, props, function(value, path2) {
-            return predicate(value, path2[0]);
+          return basePickBy(object2, props, function(value, path3) {
+            return predicate(value, path3[0]);
           });
         }
-        function result2(object2, path2, defaultValue) {
-          path2 = castPath(path2, object2);
-          var index = -1, length = path2.length;
+        function result2(object2, path3, defaultValue) {
+          path3 = castPath(path3, object2);
+          var index = -1, length = path3.length;
           if (!length) {
             length = 1;
             object2 = undefined2;
           }
           while (++index < length) {
-            var value = object2 == null ? undefined2 : object2[toKey(path2[index])];
+            var value = object2 == null ? undefined2 : object2[toKey(path3[index])];
             if (value === undefined2) {
               index = length;
               value = defaultValue;
@@ -21049,12 +21049,12 @@ var require_lodash = __commonJS({
           }
           return object2;
         }
-        function set(object2, path2, value) {
-          return object2 == null ? object2 : baseSet(object2, path2, value);
+        function set(object2, path3, value) {
+          return object2 == null ? object2 : baseSet(object2, path3, value);
         }
-        function setWith(object2, path2, value, customizer) {
+        function setWith(object2, path3, value, customizer) {
           customizer = typeof customizer == "function" ? customizer : undefined2;
-          return object2 == null ? object2 : baseSet(object2, path2, value, customizer);
+          return object2 == null ? object2 : baseSet(object2, path3, value, customizer);
         }
         var toPairs = createToPairs(keys2);
         var toPairsIn = createToPairs(keysIn);
@@ -21076,15 +21076,15 @@ var require_lodash = __commonJS({
           });
           return accumulator;
         }
-        function unset(object2, path2) {
-          return object2 == null ? true : baseUnset(object2, path2);
+        function unset(object2, path3) {
+          return object2 == null ? true : baseUnset(object2, path3);
         }
-        function update(object2, path2, updater) {
-          return object2 == null ? object2 : baseUpdate(object2, path2, castFunction(updater));
+        function update(object2, path3, updater) {
+          return object2 == null ? object2 : baseUpdate(object2, path3, castFunction(updater));
         }
-        function updateWith(object2, path2, updater, customizer) {
+        function updateWith(object2, path3, updater, customizer) {
           customizer = typeof customizer == "function" ? customizer : undefined2;
-          return object2 == null ? object2 : baseUpdate(object2, path2, castFunction(updater), customizer);
+          return object2 == null ? object2 : baseUpdate(object2, path3, castFunction(updater), customizer);
         }
         function values2(object2) {
           return object2 == null ? [] : baseValues(object2, keys2(object2));
@@ -21465,17 +21465,17 @@ var require_lodash = __commonJS({
         function matches(source) {
           return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
         }
-        function matchesProperty(path2, srcValue) {
-          return baseMatchesProperty(path2, baseClone(srcValue, CLONE_DEEP_FLAG));
+        function matchesProperty(path3, srcValue) {
+          return baseMatchesProperty(path3, baseClone(srcValue, CLONE_DEEP_FLAG));
         }
-        var method = baseRest(function(path2, args) {
+        var method = baseRest(function(path3, args) {
           return function(object2) {
-            return baseInvoke(object2, path2, args);
+            return baseInvoke(object2, path3, args);
           };
         });
         var methodOf = baseRest(function(object2, args) {
-          return function(path2) {
-            return baseInvoke(object2, path2, args);
+          return function(path3) {
+            return baseInvoke(object2, path3, args);
           };
         });
         function mixin2(object2, source, options) {
@@ -21522,12 +21522,12 @@ var require_lodash = __commonJS({
         var over = createOver(arrayMap);
         var overEvery = createOver(arrayEvery);
         var overSome = createOver(arraySome);
-        function property2(path2) {
-          return isKey(path2) ? baseProperty(toKey(path2)) : basePropertyDeep(path2);
+        function property2(path3) {
+          return isKey(path3) ? baseProperty(toKey(path3)) : basePropertyDeep(path3);
         }
         function propertyOf2(object2) {
-          return function(path2) {
-            return object2 == null ? undefined2 : baseGet(object2, path2);
+          return function(path3) {
+            return object2 == null ? undefined2 : baseGet(object2, path3);
           };
         }
         var range2 = createRange();
@@ -21980,12 +21980,12 @@ var require_lodash = __commonJS({
         LazyWrapper.prototype.findLast = function(predicate) {
           return this.reverse().find(predicate);
         };
-        LazyWrapper.prototype.invokeMap = baseRest(function(path2, args) {
-          if (typeof path2 == "function") {
+        LazyWrapper.prototype.invokeMap = baseRest(function(path3, args) {
+          if (typeof path3 == "function") {
             return new LazyWrapper(this);
           }
           return this.map(function(value) {
-            return baseInvoke(value, path2, args);
+            return baseInvoke(value, path3, args);
           });
         });
         LazyWrapper.prototype.reject = function(predicate) {
@@ -24355,7 +24355,7 @@ var require_validation_error = __commonJS({
       return ValidationErrorItemOrigin22;
     })(ValidationErrorItemOrigin2 || {});
     var ValidationErrorItem2 = class {
-      constructor(message, type, path2, value, instance, validatorKey, fnName, fnArgs) {
+      constructor(message, type, path3, value, instance, validatorKey, fnName, fnArgs) {
         __publicField(this, "message");
         __publicField(this, "type");
         __publicField(this, "path");
@@ -24367,7 +24367,7 @@ var require_validation_error = __commonJS({
         __publicField(this, "validatorArgs");
         this.message = message || "";
         this.type = null;
-        this.path = path2 || null;
+        this.path = path3 || null;
         this.value = value !== void 0 ? value : null;
         this.origin = null;
         this.instance = instance || null;
@@ -24426,9 +24426,9 @@ var require_validation_error = __commonJS({
           this.stack = options.stack;
         }
       }
-      get(path2) {
+      get(path3) {
         return this.errors.reduce((reduced, error) => {
-          if (error.path === path2) {
+          if (error.path === path3) {
             reduced.push(error);
           }
           return reduced;
@@ -38926,8 +38926,8 @@ var init_tap = __esm({
 });
 
 // node_modules/underscore/modules/toPath.js
-function toPath(path2) {
-  return isArray_default(path2) ? path2 : [path2];
+function toPath(path3) {
+  return isArray_default(path3) ? path3 : [path3];
 }
 var init_toPath = __esm({
   "node_modules/underscore/modules/toPath.js"() {
@@ -38938,8 +38938,8 @@ var init_toPath = __esm({
 });
 
 // node_modules/underscore/modules/_toPath.js
-function toPath2(path2) {
-  return _.toPath(path2);
+function toPath2(path3) {
+  return _.toPath(path3);
 }
 var init_toPath2 = __esm({
   "node_modules/underscore/modules/_toPath.js"() {
@@ -38949,11 +38949,11 @@ var init_toPath2 = __esm({
 });
 
 // node_modules/underscore/modules/_deepGet.js
-function deepGet(obj, path2) {
-  var length = path2.length;
+function deepGet(obj, path3) {
+  var length = path3.length;
   for (var i = 0; i < length; i++) {
     if (obj == null) return void 0;
-    obj = obj[path2[i]];
+    obj = obj[path3[i]];
   }
   return length ? obj : void 0;
 }
@@ -38963,8 +38963,8 @@ var init_deepGet = __esm({
 });
 
 // node_modules/underscore/modules/get.js
-function get(object2, path2, defaultValue) {
-  var value = deepGet(object2, toPath2(path2));
+function get(object2, path3, defaultValue) {
+  var value = deepGet(object2, toPath2(path3));
   return isUndefined(value) ? defaultValue : value;
 }
 var init_get = __esm({
@@ -38976,11 +38976,11 @@ var init_get = __esm({
 });
 
 // node_modules/underscore/modules/has.js
-function has2(obj, path2) {
-  path2 = toPath2(path2);
-  var length = path2.length;
+function has2(obj, path3) {
+  path3 = toPath2(path3);
+  var length = path3.length;
   for (var i = 0; i < length; i++) {
-    var key = path2[i];
+    var key = path3[i];
     if (!has(obj, key)) return false;
     obj = obj[key];
   }
@@ -39017,10 +39017,10 @@ var init_matcher = __esm({
 });
 
 // node_modules/underscore/modules/property.js
-function property(path2) {
-  path2 = toPath2(path2);
+function property(path3) {
+  path3 = toPath2(path3);
   return function(obj) {
-    return deepGet(obj, path2);
+    return deepGet(obj, path3);
   };
 }
 var init_property = __esm({
@@ -39129,8 +39129,8 @@ var init_noop = __esm({
 // node_modules/underscore/modules/propertyOf.js
 function propertyOf(obj) {
   if (obj == null) return noop;
-  return function(path2) {
-    return get(obj, path2);
+  return function(path3) {
+    return get(obj, path3);
   };
 }
 var init_propertyOf = __esm({
@@ -39324,14 +39324,14 @@ var init_template = __esm({
 });
 
 // node_modules/underscore/modules/result.js
-function result(obj, path2, fallback) {
-  path2 = toPath2(path2);
-  var length = path2.length;
+function result(obj, path3, fallback) {
+  path3 = toPath2(path3);
+  var length = path3.length;
   if (!length) {
     return isFunction_default(fallback) ? fallback.call(obj) : fallback;
   }
   for (var i = 0; i < length; i++) {
-    var prop = obj == null ? void 0 : obj[path2[i]];
+    var prop = obj == null ? void 0 : obj[path3[i]];
     if (prop === void 0) {
       prop = fallback;
       i = length;
@@ -40012,14 +40012,14 @@ var init_invoke = __esm({
     init_map();
     init_deepGet();
     init_toPath2();
-    invoke_default = restArguments(function(obj, path2, args) {
+    invoke_default = restArguments(function(obj, path3, args) {
       var contextPath, func;
-      if (isFunction_default(path2)) {
-        func = path2;
+      if (isFunction_default(path3)) {
+        func = path3;
       } else {
-        path2 = toPath2(path2);
-        contextPath = path2.slice(0, -1);
-        path2 = path2[path2.length - 1];
+        path3 = toPath2(path3);
+        contextPath = path3.slice(0, -1);
+        path3 = path3[path3.length - 1];
       }
       return map(obj, function(context) {
         var method = func;
@@ -40028,7 +40028,7 @@ var init_invoke = __esm({
             context = deepGet(context, contextPath);
           }
           if (context == null) return void 0;
-          method = context[path2];
+          method = context[path3];
         }
         return method == null ? method : method.apply(context, args);
       });
@@ -45959,39 +45959,39 @@ var require_dottie = __commonJS({
         }
         return Dottie.transform.apply(this, args);
       };
-      Dottie.find = function(path2, object2) {
-        return Dottie.get(object2, path2);
+      Dottie.find = function(path3, object2) {
+        return Dottie.get(object2, path3);
       };
       Dottie.memoizePath = true;
       var memoized = {};
-      Dottie.get = function(object2, path2, defaultVal) {
-        if (object2 === undefined2 || object2 === null || path2 === undefined2 || path2 === null) {
+      Dottie.get = function(object2, path3, defaultVal) {
+        if (object2 === undefined2 || object2 === null || path3 === undefined2 || path3 === null) {
           return defaultVal;
         }
         var names;
-        if (typeof path2 === "string") {
+        if (typeof path3 === "string") {
           if (Dottie.memoizePath) {
-            if (memoized[path2]) {
-              names = memoized[path2].slice(0);
+            if (memoized[path3]) {
+              names = memoized[path3].slice(0);
             } else {
-              names = path2.split(".").reverse();
-              memoized[path2] = names.slice(0);
+              names = path3.split(".").reverse();
+              memoized[path3] = names.slice(0);
             }
           } else {
-            names = path2.split(".").reverse();
+            names = path3.split(".").reverse();
           }
-        } else if (Array.isArray(path2)) {
-          names = reverseDupArray(path2);
+        } else if (Array.isArray(path3)) {
+          names = reverseDupArray(path3);
         }
         while (names.length && (object2 = object2[names.pop()]) !== undefined2 && object2 !== null) ;
         if (object2 === null && names.length) object2 = undefined2;
         return object2 === undefined2 ? defaultVal : object2;
       };
-      Dottie.exists = function(object2, path2) {
-        return Dottie.get(object2, path2) !== undefined2;
+      Dottie.exists = function(object2, path3) {
+        return Dottie.get(object2, path3) !== undefined2;
       };
-      Dottie.set = function(object2, path2, value, options) {
-        var pieces = Array.isArray(path2) ? path2 : path2.split("."), current = object2, piece, length = pieces.length;
+      Dottie.set = function(object2, path3, value, options) {
+        var pieces = Array.isArray(path3) ? path3 : path3.split("."), current = object2, piece, length = pieces.length;
         if (pieces[0] === "__proto__") return;
         if (typeof current !== "object") {
           throw new Error("Parent is not an object.");
@@ -46012,9 +46012,9 @@ var require_dottie = __commonJS({
         }
         current[piece] = value;
       };
-      Dottie["default"] = function(object2, path2, value) {
-        if (Dottie.get(object2, path2) === undefined2) {
-          Dottie.set(object2, path2, value);
+      Dottie["default"] = function(object2, path3, value) {
+        if (Dottie.get(object2, path3) === undefined2) {
+          Dottie.set(object2, path3, value);
         }
       };
       Dottie.transform = function Dottie$transformfunction(object2, options) {
@@ -56426,8 +56426,8 @@ var require_query_generator = __commonJS({
                   const itemSplit = item2.split(".");
                   if (previousModel.rawAttributes[itemSplit[0]].type instanceof DataTypes2.JSON) {
                     const identifier2 = this.quoteIdentifiers(`${previousModel.name}.${previousModel.rawAttributes[itemSplit[0]].field}`);
-                    const path2 = itemSplit.slice(1);
-                    item2 = this.jsonPathExtractionQuery(identifier2, path2);
+                    const path3 = itemSplit.slice(1);
+                    item2 = this.jsonPathExtractionQuery(identifier2, path3);
                     item2 = this.sequelize.literal(item2);
                   }
                 }
@@ -56588,8 +56588,8 @@ var require_query_generator = __commonJS({
       isIdentifierQuoted(identifier2) {
         return /^\s*(?:([`"'])(?:(?!\1).|\1{2})*\1\.?)+\s*$/i.test(identifier2);
       }
-      jsonPathExtractionQuery(column, path2, isJson) {
-        let paths = _3.toPath(path2);
+      jsonPathExtractionQuery(column, path3, isJson) {
+        let paths = _3.toPath(path3);
         let pathStr;
         const quotedColumn = this.isIdentifierQuoted(column) ? column : this.quoteIdentifier(column);
         switch (this.dialect) {
@@ -57670,14 +57670,14 @@ https://github.com/sequelize/sequelize/discussions/15694`);
         const result2 = items.join(this.OperatorMap[Op2.and]);
         return items.length > 1 ? `(${result2})` : result2;
       }
-      _traverseJSON(items, baseKey, prop, item, path2) {
+      _traverseJSON(items, baseKey, prop, item, path3) {
         let cast2;
-        if (path2[path2.length - 1].includes("::")) {
-          const tmp = path2[path2.length - 1].split("::");
+        if (path3[path3.length - 1].includes("::")) {
+          const tmp = path3[path3.length - 1].split("::");
           cast2 = tmp[1];
-          path2[path2.length - 1] = tmp[0];
+          path3[path3.length - 1] = tmp[0];
         }
-        let pathKey = this.jsonPathExtractionQuery(baseKey, path2);
+        let pathKey = this.jsonPathExtractionQuery(baseKey, path3);
         if (_3.isPlainObject(item)) {
           Utils2.getOperators(item).forEach((op) => {
             const value = this._toJSONValue(item[op]);
@@ -57689,11 +57689,11 @@ https://github.com/sequelize/sequelize/discussions/15694`);
               } catch (e) {
               }
             }
-            pathKey = this.jsonPathExtractionQuery(baseKey, path2, isJson);
+            pathKey = this.jsonPathExtractionQuery(baseKey, path3, isJson);
             items.push(this.whereItemQuery(this._castKey(pathKey, value, cast2), { [op]: value }));
           });
           _3.forOwn(item, (value, itemProp) => {
-            this._traverseJSON(items, baseKey, itemProp, value, path2.concat([itemProp]));
+            this._traverseJSON(items, baseKey, itemProp, value, path3.concat([itemProp]));
           });
           return;
         }
@@ -57901,13 +57901,13 @@ https://github.com/sequelize/sequelize/discussions/15694`);
         }
         throw new Error(`Unsupported where option value: ${util.inspect(smth)}. Please refer to the Sequelize documentation to learn more about which values are accepted as part of the where option.`);
       }
-      parseConditionObject(conditions, path2) {
-        path2 = path2 || [];
+      parseConditionObject(conditions, path3) {
+        path3 = path3 || [];
         return _3.reduce(conditions, (result2, value, key) => {
           if (_3.isObject(value)) {
-            return result2.concat(this.parseConditionObject(value, path2.concat(key)));
+            return result2.concat(this.parseConditionObject(value, path3.concat(key)));
           }
-          result2.push({ path: path2.concat(key), value });
+          result2.push({ path: path3.concat(key), value });
           return result2;
         }, []);
       }
@@ -62067,8 +62067,8 @@ var require_query_generator5 = __commonJS({
         }
         return hasJsonFunction;
       }
-      jsonPathExtractionQuery(column, path2) {
-        let paths = _3.toPath(path2);
+      jsonPathExtractionQuery(column, path3) {
+        let paths = _3.toPath(path3);
         const quotedColumn = this.isIdentifierQuoted(column) ? column : this.quoteIdentifier(column);
         paths = paths.map((subPath) => {
           return /\D/.test(subPath) ? Utils2.addTicks(subPath, '"') : subPath;
@@ -63789,7 +63789,7 @@ var require_connection_manager7 = __commonJS({
   "node_modules/sequelize/lib/dialects/sqlite/connection-manager.js"(exports, module) {
     "use strict";
     var fs = __require("fs");
-    var path2 = __require("path");
+    var path3 = __require("path");
     var AbstractConnectionManager = require_connection_manager();
     var { logger } = require_logger();
     var debug = logger.debugContext("connection:sqlite");
@@ -63833,7 +63833,7 @@ var require_connection_manager7 = __commonJS({
           return this.connections[options.inMemory || options.uuid];
         }
         if (!options.inMemory && (options.readWriteMode & this.lib.OPEN_CREATE) !== 0) {
-          fs.mkdirSync(path2.dirname(options.storage), { recursive: true });
+          fs.mkdirSync(path3.dirname(options.storage), { recursive: true });
         }
         const connection = await new Promise((resolve, reject2) => {
           this.connections[options.inMemory || options.uuid] = new this.lib.Database(options.storage, options.readWriteMode, (err) => {
@@ -67686,7 +67686,7 @@ var require_sequelize = __commonJS({
     };
     var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     var url = __require("url");
-    var path2 = __require("path");
+    var path3 = __require("path");
     var pgConnectionString = require_pg_connection_string();
     var retry = require_dist().default;
     var _3 = require_lodash();
@@ -67725,8 +67725,8 @@ var require_sequelize = __commonJS({
           options.dialect = urlParts.protocol.replace(/:$/, "");
           options.host = urlParts.hostname;
           if (options.dialect === "sqlite" && urlParts.pathname && !urlParts.pathname.startsWith("/:memory")) {
-            const storagePath = path2.join(options.host, urlParts.pathname);
-            options.storage = path2.resolve(options.storage || storagePath);
+            const storagePath = path3.join(options.host, urlParts.pathname);
+            options.storage = path3.resolve(options.storage || storagePath);
           }
           if (urlParts.pathname) {
             config2.database = urlParts.pathname.replace(/^\//, "");
@@ -68324,78 +68324,12 @@ var require_lib5 = __commonJS({
 var import_cors = __toESM(require_lib(), 1);
 import express from "express";
 
-// src/routes/venteRoute.js
-import { Router } from "express";
+// src/routes/index.js
+import { Router as Router6 } from "express";
 
-// src/controllers/VenteController.js
-var VenteController = class {
-  async getAllVentes(req, res) {
-    try {
-      const Ventes = await Vente.findAll();
-      res.json(Ventes);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des Ventes" });
-    }
-  }
-  async create(req, res) {
-    try {
-      const products = req.body;
-      await Promise.all(products.map(async (element) => {
-        const stock = await Stock.findOne({ where: { produitId: element.produitId } });
-        if (!stock) {
-          throw new Error(`Produit ${element.produitId} non trouv\xE9 en stock.`);
-        }
-        const newQte = stock.quantite - element.quantite;
-        await stock.update({ quantite: newQte });
-        const vente = await Vente.create(element);
-        const venteDetails = { ...element, venteId: vente.id };
-        await VenteDetail.create(venteDetails);
-      }));
-      res.json({ message: "Ventes cr\xE9\xE9es avec succ\xE8s" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message || "Erreur lors de la cr\xE9ation des ventes" });
-    }
-  }
-  async update(req, res) {
-    try {
-      const vente = await Vente.findByPk(req.params.id);
-      if (!vente) {
-        return res.status(404).json({ message: "Vente introuvable" });
-      }
-      await vente.update(req.body);
-      res.json(vente);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur lors de la mise \xE0 jour de la vente" });
-    }
-  }
-  async delete(req, res) {
-    try {
-      const vente = await Vente.findByPk(req.params.id);
-      if (!vente) {
-        return res.status(404).json({ message: "Vente introuvable" });
-      }
-      await vente.destroy();
-      res.json({ message: "Vente supprim\xE9e avec succ\xE8s" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erreur lors de la suppression de la vente" });
-    }
-  }
-};
-var VenteController_default = new VenteController();
-
-// src/routes/venteRoute.js
-var router = Router();
-router.get("/Ventes", VenteController_default.getAllVentes);
-router.post("/Vente/create", VenteController_default.create);
-var venteRoute_default = router;
-
-// src/routes/produitRoute.js
+// src/routes/produit.js
 var import_multer = __toESM(require_multer(), 1);
-import { Router as Router2 } from "express";
+import { Router } from "express";
 
 // src/database/models/index.js
 import path from "path";
@@ -68522,6 +68456,10 @@ var produit_default = (sequelize2) => {
   }
   Produit.init(
     {
+      seuilAlerte: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       nom: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -68639,7 +68577,7 @@ var categorie_default = (sequelize2) => {
         msg: "La cat\xE9gorie existe d\xE9ja"
       }
     },
-    desription: {
+    description: {
       type: DataTypes.STRING,
       allowNull: true
     }
@@ -68703,19 +68641,19 @@ var ventedetail_default = (sequelize2) => {
 
 // src/database/models/fournisseur.js
 var fournisseur_default = (sequelize2, DataTypes2) => {
-  class Fournisseur2 extends Model {
+  class Fournisseur extends Model {
     static associate(models) {
-      Fournisseur2.hasMany(models.Produit, { foreignKey: "fournisseurId", as: "Produits" });
+      Fournisseur.hasMany(models.Produit, { foreignKey: "fournisseurId", as: "Produits" });
     }
   }
-  Fournisseur2.init({
+  Fournisseur.init({
     nom: DataTypes2.STRING,
     contact: DataTypes2.STRING
   }, {
     sequelize: sequelize2,
     modelName: "Fournisseur"
   });
-  return Fournisseur2;
+  return Fournisseur;
 };
 
 // src/database/models/index.js
@@ -68749,7 +68687,7 @@ var models_default = db;
 
 // src/controllers/ProduitController.js
 var ProduitController = class {
-  async getAllProduits(req, res) {
+  async getAll(req, res) {
     try {
       const Produits = await models_default.Produit.findAll({
         include: [
@@ -68758,6 +68696,18 @@ var ProduitController = class {
             as: "stock",
             required: false,
             attributes: ["quantite"]
+          },
+          {
+            model: models_default.Categorie,
+            as: "categorie",
+            required: false,
+            attributes: ["nom"]
+          },
+          {
+            model: models_default.Fournisseur,
+            as: "fournisseur",
+            required: false,
+            attributes: ["nom"]
           }
         ]
       });
@@ -68781,7 +68731,8 @@ var ProduitController = class {
           description: req.body.description || "",
           image: imagePath,
           qte: req.body.qte,
-          fournisseurId: req.body.fournisseurId
+          fournisseurId: req.body.fournisseurId,
+          categorieId: req.body.categorieId
         },
         { transaction }
       );
@@ -68790,6 +68741,7 @@ var ProduitController = class {
         {
           produitId: produit.id,
           quantite: quantiteInitiale,
+          date_stock: /* @__PURE__ */ new Date(),
           type: "Entree"
         },
         { transaction }
@@ -68822,6 +68774,37 @@ var ProduitController = class {
       res.status(500).json({ message: "Erreur lors de la mise \xE0 jour du Produit" });
     }
   }
+  async getById(req, res) {
+    try {
+      const produit = await models_default.Produit.findByPk(req.params.id, {
+        include: [
+          {
+            model: models_default.Stock,
+            as: "stock",
+            required: false,
+            attributes: ["quantite"]
+          },
+          {
+            model: models_default.Categorie,
+            as: "categorie",
+            required: false,
+            attributes: ["nom"]
+          },
+          {
+            model: models_default.Fournisseur,
+            as: "fournisseur",
+            required: false,
+            attributes: ["nom"]
+          }
+        ]
+      });
+      if (!produit) return res.status(404).json({ message: "Produit introuvable" });
+      res.json(produit);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du Produit" });
+    }
+  }
   async delete(req, res) {
     try {
       const produit = await models_default.Produit.findByPk(req.params.id);
@@ -68836,8 +68819,8 @@ var ProduitController = class {
 };
 var ProduitController_default = new ProduitController();
 
-// src/routes/produitRoute.js
-var router2 = Router2();
+// src/routes/produit.js
+var router = Router();
 var upload = (0, import_multer.default)({
   storage: import_multer.default.diskStorage({
     destination: (req, file, cb2) => {
@@ -68848,16 +68831,19 @@ var upload = (0, import_multer.default)({
     }
   })
 });
-router2.get("/produits", ProduitController_default.getAllProduits);
-router2.post("/produit/create", upload.single("image"), ProduitController_default.create);
-var produitRoute_default = router2;
+router.get("/produits", ProduitController_default.getAll);
+router.post("/produits", upload.single("image"), ProduitController_default.create);
+router.get("/produits/:id", ProduitController_default.getById);
+router.put("/produits/:id", upload.single("image"), ProduitController_default.update);
+router.delete("/produits/:id", ProduitController_default.delete);
+var produit_default2 = router;
 
-// src/routes/fournisseurRoute.js
-import { Router as Router3 } from "express";
+// src/routes/fournisseur.js
+import { Router as Router2 } from "express";
 
 // src/controllers/fournisseurController.js
 var FournisseurController = class {
-  async getAllFournisseurs(req, res) {
+  async getAll(req, res) {
     try {
       const fournisseurs = await models_default.Fournisseur.findAll();
       res.json(fournisseurs);
@@ -68868,16 +68854,26 @@ var FournisseurController = class {
   }
   async create(req, res) {
     try {
-      const fournisseur = await Fournisseur.create(req.body);
+      const fournisseur = await models_default.Fournisseur.create(req.body);
       res.json(fournisseur);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Erreur lors de la cr\xE9ation du fournisseur" });
+      res.status(500).json({ message: "Erreur lors de la cr\xE9ation du fournisseur", error });
+    }
+  }
+  async getById(req, res) {
+    try {
+      const fournisseur = await models_default.Fournisseur.findByPk(req.params.id);
+      if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
+      res.json(fournisseur);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du fournisseur" });
     }
   }
   async update(req, res) {
     try {
-      const fournisseur = await Fournisseur.findByPk(req.params.id);
+      const fournisseur = await models_default.Fournisseur.findByPk(req.params.id);
       if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
       await fournisseur.update(req.body);
       res.json(fournisseur);
@@ -68888,7 +68884,7 @@ var FournisseurController = class {
   }
   async delete(req, res) {
     try {
-      const fournisseur = await Fournisseur.findByPk(req.params.id);
+      const fournisseur = await models_default.Fournisseur.findByPk(req.params.id);
       if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
       await fournisseur.destroy();
       res.json({ message: "Fournisseur supprim\xE9" });
@@ -68900,13 +68896,85 @@ var FournisseurController = class {
 };
 var fournisseurController_default = new FournisseurController();
 
-// src/routes/fournisseurRoute.js
-var router3 = Router3();
-router3.get("/fournisseurs", fournisseurController_default.getAllFournisseurs);
-router3.post("/fournisseur/create", fournisseurController_default.create);
-var fournisseurRoute_default = router3;
+// src/routes/fournisseur.js
+var router2 = Router2();
+router2.get("/fournisseurs", fournisseurController_default.getAll);
+router2.post("/fournisseurs", fournisseurController_default.create);
+router2.get("/fournisseurs/:id", fournisseurController_default.getById);
+router2.put("/fournisseurs/:id", fournisseurController_default.update);
+router2.delete("/fournisseurs/:id", fournisseurController_default.delete);
+var fournisseur_default2 = router2;
 
-// src/routes/stockRoute.js
+// src/routes/vente.js
+import { Router as Router3 } from "express";
+
+// src/controllers/VenteController.js
+var VenteController = class {
+  async getAllVentes(req, res) {
+    try {
+      const Ventes = await Vente.findAll();
+      res.json(Ventes);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des Ventes" });
+    }
+  }
+  async create(req, res) {
+    try {
+      const products = req.body;
+      await Promise.all(products.map(async (element) => {
+        const stock = await Stock.findOne({ where: { produitId: element.produitId } });
+        if (!stock) {
+          throw new Error(`Produit ${element.produitId} non trouv\xE9 en stock.`);
+        }
+        const newQte = stock.quantite - element.quantite;
+        await stock.update({ quantite: newQte });
+        const vente = await Vente.create(element);
+        const venteDetails = { ...element, venteId: vente.id };
+        await VenteDetail.create(venteDetails);
+      }));
+      res.json({ message: "Ventes cr\xE9\xE9es avec succ\xE8s" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message || "Erreur lors de la cr\xE9ation des ventes" });
+    }
+  }
+  async update(req, res) {
+    try {
+      const vente = await Vente.findByPk(req.params.id);
+      if (!vente) {
+        return res.status(404).json({ message: "Vente introuvable" });
+      }
+      await vente.update(req.body);
+      res.json(vente);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la mise \xE0 jour de la vente" });
+    }
+  }
+  async delete(req, res) {
+    try {
+      const vente = await Vente.findByPk(req.params.id);
+      if (!vente) {
+        return res.status(404).json({ message: "Vente introuvable" });
+      }
+      await vente.destroy();
+      res.json({ message: "Vente supprim\xE9e avec succ\xE8s" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la suppression de la vente" });
+    }
+  }
+};
+var VenteController_default = new VenteController();
+
+// src/routes/vente.js
+var router3 = Router3();
+router3.get("/Ventes", VenteController_default.getAllVentes);
+router3.post("/Vente/create", VenteController_default.create);
+var vente_default2 = router3;
+
+// src/routes/stock.js
 import { Router as Router4 } from "express";
 
 // src/controllers/StockController.js
@@ -68927,12 +68995,89 @@ var StockController = class {
 };
 var StockController_default = new StockController();
 
-// src/routes/stockRoute.js
+// src/routes/stock.js
 var router4 = Router4();
 router4.post("/Stock", StockController_default.getStock);
-var stockRoute_default = router4;
+var stock_default2 = router4;
+
+// src/routes/categorie.js
+import { Router as Router5 } from "express";
+
+// src/controllers/categorieController.js
+var CategorieController = class {
+  async getAll(req, res) {
+    try {
+      const Categories = await models_default.Categorie.findAll();
+      res.json(Categories);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des Categories" });
+    }
+  }
+  async create(req, res) {
+    try {
+      const Categorie = await models_default.Categorie.create(req.body);
+      res.json(Categorie);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la cr\xE9ation du Categorie", error });
+    }
+  }
+  async update(req, res) {
+    try {
+      const Categorie = await models_default.Categorie.findByPk(req.params.id);
+      if (!Categorie) return res.status(404).json({ message: "Categorie introuvable" });
+      await Categorie.update(req.body);
+      res.json(Categorie);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la mise \xE0 jour du Categorie" });
+    }
+  }
+  async delete(req, res) {
+    try {
+      const Categorie = await models_default.Categorie.findByPk(req.params.id);
+      if (!Categorie) return res.status(404).json({ message: "Categorie introuvable" });
+      await Categorie.destroy();
+      res.json({ message: "Categorie supprim\xE9" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la suppression du Categorie" });
+    }
+  }
+  async getById(req, res) {
+    try {
+      const Categorie = await models_default.Categorie.findByPk(req.params.id);
+      if (!Categorie) return res.status(404).json({ message: "Categorie introuvable" });
+      res.json(Categorie);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du Categorie" });
+    }
+  }
+};
+var categorieController_default = new CategorieController();
+
+// src/routes/categorie.js
+var router5 = Router5();
+router5.get("/categories", categorieController_default.getAll);
+router5.post("/categories", categorieController_default.create);
+router5.get("/categories/:id", categorieController_default.getById);
+router5.put("/categories/:id", categorieController_default.update);
+router5.delete("/categories/:id", categorieController_default.delete);
+var categorie_default2 = router5;
+
+// src/routes/index.js
+var router6 = Router6();
+router6.use("/", produit_default2);
+router6.use("/", fournisseur_default2);
+router6.use("/", vente_default2);
+router6.use("/", stock_default2);
+router6.use("/", categorie_default2);
+var routes_default = router6;
 
 // src/app.js
+import path2 from "path";
 var app = express();
 var corsOptions = {
   origin: "http://localhost:5173",
@@ -68943,10 +69088,8 @@ app.use((0, import_cors.default)(corsOptions));
 app.options("*", (0, import_cors.default)());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use("/api/", fournisseurRoute_default);
-app.use("/api/", produitRoute_default);
-app.use("/api/", venteRoute_default);
-app.use("/api/", stockRoute_default);
+app.use("/api", routes_default);
+app.use(express.static("../uploads"));
 app.get("/", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.send("Bienvenue sur mon serveur Express !");

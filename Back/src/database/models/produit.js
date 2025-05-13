@@ -23,6 +23,11 @@ export default (sequelize) => {
 
   Produit.init(
     {
+      seuilAlerte: {
+        type: DataTypes.STRING,
+        allowNull: false,
+       },
+       
       nom: {
         type: DataTypes.STRING,
         allowNull: false,

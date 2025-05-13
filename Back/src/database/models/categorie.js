@@ -17,7 +17,7 @@ export default(sequelize) => {
         msg:"La catégorie existe déja"
       }
     },
-    desription: {
+    description: {
       type:DataTypes.STRING,
       allowNull:true
     }

@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import router from './routes';
+import path from 'path';
 
-import venteRoute from '@/routes/venteRoute.js';
-import produitRoute from '@/routes/produitRoute.js';
-import fournisseurRoute from '@/routes/fournisseurRoute.js';
-import stockRoute from '@/routes/stockRoute.js';
 
 const app = express();
 
@@ -23,10 +21,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
-app.use('/api/', fournisseurRoute);
-app.use('/api/', produitRoute);
-app.use('/api/', venteRoute);
-app.use('/api/', stockRoute);
+app.use('/api', router);
+app.use(express.static("../uploads") );
+
 
 // Test route
 app.get('/', (req, res) => {

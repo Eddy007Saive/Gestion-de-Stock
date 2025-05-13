@@ -1,7 +1,7 @@
 import db from "@/database/models";
 class ProduitController {
 
-    async getAllProduits(req, res) {
+    async getAll(req, res) {
         try {
             const Produits = await db.Produit.findAll({
                 include: [
@@ -10,6 +10,20 @@ class ProduitController {
                         as: 'stock',      
                         required: false,    
                         attributes: ['quantite'],  
+                    },
+
+                    {
+                        model: db.Categorie,        
+                        as: 'categorie',      
+                        required: false,    
+                        attributes: ['nom'],  
+                    },
+
+                    {
+                        model: db.Fournisseur,        
+                        as: 'fournisseur',      
+                        required: false,    
+                        attributes: ['nom'],  
                     },
                 ],
             });
@@ -36,7 +50,9 @@ class ProduitController {
                     description: req.body.description || "",
                     image: imagePath,
                     qte: req.body.qte,
-                    fournisseurId: req.body.fournisseurId
+                    fournisseurId: req.body.fournisseurId,
+                    categorieId: req.body.categorieId
+
                 },
                 { transaction }
             );
@@ -47,6 +63,7 @@ class ProduitController {
                 {
                     produitId: produit.id,
                     quantite: quantiteInitiale,
+                    date_stock: new Date(),
                     type:"Entree"
                 },
                 { transaction }
@@ -82,6 +99,38 @@ class ProduitController {
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Erreur lors de la mise à jour du Produit" });
+        }
+    }
+
+    async getById(req, res) {
+        try {
+            const produit = await db.Produit.findByPk(req.params.id, {
+                include: [
+                    {
+                        model: db.Stock,
+                        as: 'stock',
+                        required: false,
+                        attributes: ['quantite'],
+                    },
+                    {
+                        model: db.Categorie,
+                        as: 'categorie',
+                        required: false,
+                        attributes: ['nom'],
+                    },
+                    {
+                        model: db.Fournisseur,
+                        as: 'fournisseur',
+                        required: false,
+                        attributes: ['nom'],
+                    },
+                ],
+            });
+            if (!produit) return res.status(404).json({ message: "Produit introuvable" });
+            res.json(produit);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Erreur lors de la récupération du Produit" });
         }
     }
 

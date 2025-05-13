@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createProduit, getProduits } from "@/services/Produit";
-import {  getFournisseurs } from "@/services/Fournisseur";
+import {  getFournisseurs,getCategories} from "@/services";
 import toastify from "@/utils/toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
@@ -47,7 +47,7 @@ export function Create() {
   };
 
   const fetchCategorie = async () => {
-    const response = await getFournisseurs();
+    const response = await getCategories();
     setCategorie(response.data);
     
   };
