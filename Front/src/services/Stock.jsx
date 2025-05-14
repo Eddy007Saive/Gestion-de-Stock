@@ -1,12 +1,10 @@
 import apiClient from "@/utils/ApiClient";
-const url="/Stock"
+const url="/stocks"
 
 export const getStock = async (id) => {
     
-    let formData=new FormData();
-    formData.append('productI',id);
     try {
-        const response = await apiClient.post(`${url}`,formData);
+        const response = await apiClient.get(`${url}/${id}`);
         return response.data; 
     } catch (error) {
         console.error("Erreur lors de la récupération du stock :", error.response?.data || error.message);

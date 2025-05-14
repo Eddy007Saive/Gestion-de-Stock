@@ -47,7 +47,7 @@ export function Update() {
         fournisseurId: response.fournisseurId,
         categorieId: response.categorieId,
         image: response.image,
-        qte: response.qte,
+        qte: response.totalQuantite,
         seuilAlerte: response.seuilAlerte
       });
       

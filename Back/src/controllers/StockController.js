@@ -1,21 +1,25 @@
-// import { Stock } from "../database/models";
+import StockService from "@/services/StockService.js";
 
 class StockController {
   async getStock(req, res) {
-    const { produitId } = req.params; // Utiliser les paramètres de l'URL (notamment pour RESTful)
-
     try {
-      const stock = await Stock.findOne({ where: { produitId } });
+      const stock = await StockService.getStock(req.params.produitId);
+      if (!stock) return res.status(404).json({ message: "Produit non trouvé en stock." });
+      res.status(200).json({ stock: stock.quantite });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erreur lors de la récupération du stock." });
+    }
+  }
 
-      // Vérifier si le produit existe en stock
-      if (!stock) {
-        return res.status(404).json({ message: "Produit non trouvé en stock." });
-      }
-
-      return res.status(200).json({ stock: stock.quantite });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Erreur lors de la récupération du stock." });
+  async getStockRestant(req, res) {
+    try {
+      const stockRestant = await StockService.getStockRestant(req.params.produitId);
+      if (stockRestant === null) return res.status(404).json({ message: "Produit non trouvé en stock." });
+      res.status(200).json({ stockRestant });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erreur lors de la récupération du stock restant." });
     }
   }
 }

@@ -1,15 +1,14 @@
 import { Model ,DataTypes} from "sequelize";
-export default(sequelize, DataTypes) => {
+export default(sequelize) => {
   class Vente extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+
     static associate(models) {
-      Vente.associate = (models) => {
-        Vente.hasMany(models.VenteDetail, { foreignKey: "venteId", as: "details" });
-      };
+        // Vente.hasMany(models.VenteDetail, { foreignKey: "venteId", as: "details" });
+        Vente.hasMany(models.Ventedetail, {
+            foreignKey: "venteId",
+            as: "ventedetails",
+            onDelete: "CASCADE", // Supprime les détails de la vente si la vente est supprimée
+        });
     }
   }
   Vente.init({

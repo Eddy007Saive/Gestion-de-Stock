@@ -62,7 +62,7 @@ export function liste() {
                   </tr>
                 </thead>
                 <tbody>
-                {produits.map(({ id,nom, prix, seuilAlerte, categorie,fournisseur, stock}, key)=> {
+                {produits.map(({ id,nom, prix, seuilAlerte, categorie,fournisseur, totalQuantite}, key)=> {
                     const className = `py-3 px-5 ${
                       key === produits.length - 1 ? "" : "border-b border-blue-gray-50"
                     }`;
@@ -95,7 +95,7 @@ export function liste() {
     
                           <td className={className}>
                             <Typography className="text-xs font-semibold text-blue-gray-600">
-                              {stock.quantite}
+                              {totalQuantite}
                             </Typography>
                           </td>
                           <td className={className}>

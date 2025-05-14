@@ -3,7 +3,7 @@ import { Dashboard, Auth } from "@/layouts";
 import { Home } from "@/pages/dashboard";
 import { Create as NewProduit ,liste as Produit,Update as UpdateProduct} from "@/pages/Produit";
 import { Create as NewFournisseur,liste as Fournisseur,Update as UpdateFournisseur } from "@/pages/Fournisseur";
-import { Create as NewCommande } from "@/pages/Vente";
+import { Create as NewCommande , liste as Commande } from "@/pages/Vente";
 import { Create as NewCategorie,liste as Category ,Update as UpdateCategory } from "@/pages/Categorie";
 
 
@@ -31,7 +31,9 @@ export function AppRoute() {
         <Route path="modifier/categorie/:id" element={<UpdateCategory />} />
 
         {/* Route pour la création de commande */}
-        <Route path="commande" element={<NewCommande />} />
+        <Route path="commande" element={<Commande />} />
+        <Route path="nouveau/commande" element={<NewCommande />} />
+
         {/* Redirection par défaut vers home */}
         <Route index element={<Navigate to="home" replace />} />
       </Route>

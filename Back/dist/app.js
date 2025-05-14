@@ -218,8 +218,8 @@ var require_lib = __commonJS({
           return !!allowedOrigin;
         }
       }
-      function configureOrigin(options, req) {
-        var requestOrigin = req.headers.origin, headers = [], isAllowed;
+      function configureOrigin(options, req2) {
+        var requestOrigin = req2.headers.origin, headers = [], isAllowed;
         if (!options.origin || options.origin === "*") {
           headers.push([{
             key: "Access-Control-Allow-Origin",
@@ -266,11 +266,11 @@ var require_lib = __commonJS({
         }
         return null;
       }
-      function configureAllowedHeaders(options, req) {
+      function configureAllowedHeaders(options, req2) {
         var allowedHeaders = options.allowedHeaders || options.headers;
         var headers = [];
         if (!allowedHeaders) {
-          allowedHeaders = req.headers["access-control-request-headers"];
+          allowedHeaders = req2.headers["access-control-request-headers"];
           headers.push([{
             key: "Vary",
             value: "Access-Control-Request-Headers"
@@ -325,15 +325,15 @@ var require_lib = __commonJS({
           }
         }
       }
-      function cors2(options, req, res, next) {
-        var headers = [], method = req.method && req.method.toUpperCase && req.method.toUpperCase();
+      function cors2(options, req2, res, next) {
+        var headers = [], method = req2.method && req2.method.toUpperCase && req2.method.toUpperCase();
         if (method === "OPTIONS") {
-          headers.push(configureOrigin(options, req));
-          headers.push(configureCredentials(options, req));
-          headers.push(configureMethods(options, req));
-          headers.push(configureAllowedHeaders(options, req));
-          headers.push(configureMaxAge(options, req));
-          headers.push(configureExposedHeaders(options, req));
+          headers.push(configureOrigin(options, req2));
+          headers.push(configureCredentials(options, req2));
+          headers.push(configureMethods(options, req2));
+          headers.push(configureAllowedHeaders(options, req2));
+          headers.push(configureMaxAge(options, req2));
+          headers.push(configureExposedHeaders(options, req2));
           applyHeaders(headers, res);
           if (options.preflightContinue) {
             next();
@@ -343,9 +343,9 @@ var require_lib = __commonJS({
             res.end();
           }
         } else {
-          headers.push(configureOrigin(options, req));
-          headers.push(configureCredentials(options, req));
-          headers.push(configureExposedHeaders(options, req));
+          headers.push(configureOrigin(options, req2));
+          headers.push(configureCredentials(options, req2));
+          headers.push(configureExposedHeaders(options, req2));
           applyHeaders(headers, res);
           next();
         }
@@ -355,12 +355,12 @@ var require_lib = __commonJS({
         if (typeof o === "function") {
           optionsCallback = o;
         } else {
-          optionsCallback = function(req, cb2) {
+          optionsCallback = function(req2, cb2) {
             cb2(null, o);
           };
         }
-        return function corsMiddleware(req, res, next) {
-          optionsCallback(req, function(err, options) {
+        return function corsMiddleware(req2, res, next) {
+          optionsCallback(req2, function(err, options) {
             if (err) {
               next(err);
             } else {
@@ -374,12 +374,12 @@ var require_lib = __commonJS({
                 };
               }
               if (originCallback) {
-                originCallback(req.headers.origin, function(err2, origin) {
+                originCallback(req2.headers.origin, function(err2, origin) {
                   if (err2 || !origin) {
                     next(err2);
                   } else {
                     corsOptions2.origin = origin;
-                    cors2(corsOptions2, req, res, next);
+                    cors2(corsOptions2, req2, res, next);
                   }
                 });
               } else {
@@ -9175,12 +9175,12 @@ var require_type_is = __commonJS({
       }
       return false;
     }
-    function hasbody(req) {
-      return req.headers["transfer-encoding"] !== void 0 || !isNaN(req.headers["content-length"]);
+    function hasbody(req2) {
+      return req2.headers["transfer-encoding"] !== void 0 || !isNaN(req2.headers["content-length"]);
     }
-    function typeofrequest(req, types_) {
+    function typeofrequest(req2, types_) {
       var types = types_;
-      if (!hasbody(req)) {
+      if (!hasbody(req2)) {
         return null;
       }
       if (arguments.length > 2) {
@@ -9189,7 +9189,7 @@ var require_type_is = __commonJS({
           types[i] = arguments[i + 1];
         }
       }
-      var value = req.headers["content-type"];
+      var value = req2.headers["content-type"];
       return typeis(value, types);
     }
     function normalize(type) {
@@ -13182,19 +13182,19 @@ var require_file_appender = __commonJS({
       var idx = arr.indexOf(item);
       if (~idx) arr.splice(idx, 1);
     }
-    function FileAppender(strategy, req) {
+    function FileAppender(strategy, req2) {
       this.strategy = strategy;
-      this.req = req;
+      this.req = req2;
       switch (strategy) {
         case "NONE":
           break;
         case "VALUE":
           break;
         case "ARRAY":
-          req.files = [];
+          req2.files = [];
           break;
         case "OBJECT":
-          req.files = /* @__PURE__ */ Object.create(null);
+          req2.files = /* @__PURE__ */ Object.create(null);
           break;
         default:
           throw new Error("Unknown file strategy: " + strategy);
@@ -13292,22 +13292,22 @@ var require_make_middleware = __commonJS({
     var FileAppender = require_file_appender();
     var removeUploadedFiles = require_remove_uploaded_files();
     function makeMiddleware(setup) {
-      return function multerMiddleware(req, res, next) {
-        if (!is(req, ["multipart"])) return next();
+      return function multerMiddleware(req2, res, next) {
+        if (!is(req2, ["multipart"])) return next();
         var options = setup();
         var limits = options.limits;
         var storage = options.storage;
         var fileFilter = options.fileFilter;
         var fileStrategy = options.fileStrategy;
         var preservePath = options.preservePath;
-        req.body = /* @__PURE__ */ Object.create(null);
+        req2.body = /* @__PURE__ */ Object.create(null);
         var busboy;
         try {
-          busboy = Busboy({ headers: req.headers, limits, preservePath });
+          busboy = Busboy({ headers: req2.headers, limits, preservePath });
         } catch (err) {
           return next(err);
         }
-        var appender = new FileAppender(fileStrategy, req);
+        var appender = new FileAppender(fileStrategy, req2);
         var isDone = false;
         var readFinished = false;
         var errorOccured = false;
@@ -13316,7 +13316,7 @@ var require_make_middleware = __commonJS({
         function done(err) {
           if (isDone) return;
           isDone = true;
-          req.unpipe(busboy);
+          req2.unpipe(busboy);
           busboy.removeAllListeners();
           next(err);
         }
@@ -13328,7 +13328,7 @@ var require_make_middleware = __commonJS({
           errorOccured = true;
           pendingWrites.onceZero(function() {
             function remove(file, cb2) {
-              storage._removeFile(req, file, cb2);
+              storage._removeFile(req2, file, cb2);
             }
             removeUploadedFiles(uploadedFiles, remove, function(err, storageErrors) {
               if (err) return done(err);
@@ -13347,7 +13347,7 @@ var require_make_middleware = __commonJS({
           if (limits && Object.prototype.hasOwnProperty.call(limits, "fieldNameSize")) {
             if (fieldname.length > limits.fieldNameSize) return abortWithCode("LIMIT_FIELD_KEY");
           }
-          appendField(req.body, fieldname, value);
+          appendField(req2.body, fieldname, value);
         });
         busboy.on("file", function(fieldname, fileStream, { filename, encoding, mimeType }) {
           if (!filename) return fileStream.resume();
@@ -13361,7 +13361,7 @@ var require_make_middleware = __commonJS({
             mimetype: mimeType
           };
           var placeholder = appender.insertPlaceholder(file);
-          fileFilter(req, file, function(err, includeFile) {
+          fileFilter(req2, file, function(err, includeFile) {
             if (err) {
               appender.removePlaceholder(placeholder);
               return abortWithError(err);
@@ -13385,7 +13385,7 @@ var require_make_middleware = __commonJS({
               aborting = true;
               abortWithCode("LIMIT_FILE_SIZE", fieldname);
             });
-            storage._handleFile(req, file, function(err2, info) {
+            storage._handleFile(req2, file, function(err2, info) {
               if (aborting) {
                 appender.removePlaceholder(placeholder);
                 uploadedFiles.push(extend(file, info));
@@ -13420,7 +13420,7 @@ var require_make_middleware = __commonJS({
           readFinished = true;
           indicateDone();
         });
-        req.pipe(busboy);
+        req2.pipe(busboy);
       };
     }
     module.exports = makeMiddleware;
@@ -13523,12 +13523,12 @@ var require_disk = __commonJS({
     var path3 = __require("path");
     var crypto4 = __require("crypto");
     var mkdirp = require_mkdirp();
-    function getFilename(req, file, cb2) {
+    function getFilename(req2, file, cb2) {
       crypto4.randomBytes(16, function(err, raw) {
         cb2(err, err ? void 0 : raw.toString("hex"));
       });
     }
-    function getDestination(req, file, cb2) {
+    function getDestination(req2, file, cb2) {
       cb2(null, os.tmpdir());
     }
     function DiskStorage(opts) {
@@ -13542,11 +13542,11 @@ var require_disk = __commonJS({
         this.getDestination = opts.destination || getDestination;
       }
     }
-    DiskStorage.prototype._handleFile = function _handleFile(req, file, cb2) {
+    DiskStorage.prototype._handleFile = function _handleFile(req2, file, cb2) {
       var that = this;
-      that.getDestination(req, file, function(err, destination) {
+      that.getDestination(req2, file, function(err, destination) {
         if (err) return cb2(err);
-        that.getFilename(req, file, function(err2, filename) {
+        that.getFilename(req2, file, function(err2, filename) {
           if (err2) return cb2(err2);
           var finalPath = path3.join(destination, filename);
           var outStream = fs.createWriteStream(finalPath);
@@ -13563,7 +13563,7 @@ var require_disk = __commonJS({
         });
       });
     };
-    DiskStorage.prototype._removeFile = function _removeFile(req, file, cb2) {
+    DiskStorage.prototype._removeFile = function _removeFile(req2, file, cb2) {
       var path4 = file.path;
       delete file.destination;
       delete file.filename;
@@ -16327,7 +16327,7 @@ var require_memory = __commonJS({
     var concat = require_concat_stream();
     function MemoryStorage(opts) {
     }
-    MemoryStorage.prototype._handleFile = function _handleFile(req, file, cb2) {
+    MemoryStorage.prototype._handleFile = function _handleFile(req2, file, cb2) {
       file.stream.pipe(concat({ encoding: "buffer" }, function(data) {
         cb2(null, {
           buffer: data,
@@ -16335,7 +16335,7 @@ var require_memory = __commonJS({
         });
       }));
     };
-    MemoryStorage.prototype._removeFile = function _removeFile(req, file, cb2) {
+    MemoryStorage.prototype._removeFile = function _removeFile(req2, file, cb2) {
       delete file.buffer;
       cb2(null);
     };
@@ -16352,7 +16352,7 @@ var require_multer = __commonJS({
     var diskStorage = require_disk();
     var memoryStorage = require_memory();
     var MulterError = require_multer_error();
-    function allowAll(req, file, cb2) {
+    function allowAll(req2, file, cb2) {
       cb2(null, true);
     }
     function Multer(options) {
@@ -16378,12 +16378,12 @@ var require_multer = __commonJS({
             filesLeft[field.name] = Infinity;
           }
         });
-        function wrappedFileFilter(req, file, cb2) {
+        function wrappedFileFilter(req2, file, cb2) {
           if ((filesLeft[file.fieldname] || 0) <= 0) {
             return cb2(new MulterError("LIMIT_UNEXPECTED_FILE", file.fieldname));
           }
           filesLeft[file.fieldname] -= 1;
-          fileFilter(req, file, cb2);
+          fileFilter(req2, file, cb2);
         }
         return {
           limits: this.limits,
@@ -68536,15 +68536,15 @@ var produit_default = (sequelize2) => {
 
 // src/database/models/stock.js
 var stock_default = (sequelize2) => {
-  class Stock2 extends Model {
+  class Stock extends Model {
     static associate(models) {
-      Stock2.belongsTo(models.Produit, {
+      Stock.belongsTo(models.Produit, {
         foreignKey: "produitId",
         as: "produit"
       });
     }
   }
-  Stock2.init(
+  Stock.init(
     {
       quantite: DataTypes.INTEGER,
       produitId: DataTypes.INTEGER,
@@ -68556,7 +68556,7 @@ var stock_default = (sequelize2) => {
       modelName: "Stock"
     }
   );
-  return Stock2;
+  return Stock;
 };
 
 // src/database/models/categorie.js
@@ -68589,45 +68589,36 @@ var categorie_default = (sequelize2) => {
 };
 
 // src/database/models/vente.js
-var vente_default = (sequelize2, DataTypes2) => {
-  class Vente2 extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+var vente_default = (sequelize2) => {
+  class Vente extends Model {
     static associate(models) {
-      Vente2.associate = (models2) => {
-        Vente2.hasMany(models2.VenteDetail, { foreignKey: "venteId", as: "details" });
-      };
+      Vente.hasMany(models.Ventedetail, {
+        foreignKey: "venteId",
+        as: "ventedetails",
+        onDelete: "CASCADE"
+        // Supprime les détails de la vente si la vente est supprimée
+      });
     }
   }
-  Vente2.init({
-    dateVente: DataTypes2.DATE,
-    total: DataTypes2.FLOAT
+  Vente.init({
+    dateVente: DataTypes.DATE,
+    total: DataTypes.FLOAT
   }, {
     sequelize: sequelize2,
     modelName: "Vente"
   });
-  return Vente2;
+  return Vente;
 };
 
 // src/database/models/ventedetail.js
 var ventedetail_default = (sequelize2) => {
-  class VenteDetail2 extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+  class VenteDetail extends Model {
     static associate(models) {
-      VenteDetail2.associate = (models2) => {
-        VenteDetail2.belongsTo(models2.Produit, { foreignKey: "produitId", as: "produit" });
-        VenteDetail2.belongsTo(models2.Vente, { foreignKey: "venteId", as: "vente" });
-      };
+      VenteDetail.belongsTo(models.Produit, { foreignKey: "produitId", as: "produit" });
+      VenteDetail.belongsTo(models.Vente, { foreignKey: "venteId", as: "vente" });
     }
   }
-  VenteDetail2.init({
+  VenteDetail.init({
     quantite: DataTypes.INTEGER,
     prixUnitaire: DataTypes.FLOAT,
     produitId: DataTypes.INTEGER,
@@ -68636,7 +68627,7 @@ var ventedetail_default = (sequelize2) => {
     sequelize: sequelize2,
     modelName: "VenteDetail"
   });
-  return VenteDetail2;
+  return VenteDetail;
 };
 
 // src/database/models/fournisseur.js
@@ -68685,67 +68676,136 @@ db.sequelize = sequelize;
 db.Sequelize = lib_default;
 var models_default = db;
 
+// src/services/ProduitService.js
+var ProduitService = class {
+  async getAllVentes() {
+    return await models_default.Vente.findAll({
+      include: [
+        {
+          model: models_default.Ventedetail,
+          as: "ventedetails",
+          required: false,
+          attributes: ["quantite", "prixUnitaire", "produitId", "venteId"],
+          include: [
+            {
+              model: models_default.Produit,
+              as: "produit",
+              required: false,
+              attributes: ["nom", "categorieId"],
+              include: [
+                {
+                  model: models_default.Categorie,
+                  as: "categorie",
+                  required: false,
+                  attributes: ["nom"]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      attributes: [
+        [models_default.Sequelize.fn("DATE", models_default.Sequelize.col("dateVente")), "date"],
+        [models_default.Sequelize.fn("SUM", models_default.Sequelize.col("total")), "totalParDate"]
+      ],
+      group: [
+        models_default.Sequelize.fn("DATE", models_default.Sequelize.col("Vente.dateVente")),
+        "ventedetails.id",
+        "ventedetails.produit.id",
+        "ventedetails.produit.categorie.id"
+      ],
+      order: [[models_default.Sequelize.fn("DATE", models_default.Sequelize.col("dateVente")), "DESC"]]
+    });
+  }
+  async createProduit(data, imagePath, transaction) {
+    const produit = await models_default.Produit.create({
+      nom: data.nom,
+      prix: data.prix,
+      description: data.description || "",
+      image: imagePath,
+      qte: data.qte,
+      fournisseurId: data.fournisseurId,
+      categorieId: data.categorieId
+    }, { transaction });
+    const quantiteInitiale = data.qte ? parseInt(data.qte, 10) : 0;
+    await models_default.Stock.create({
+      produitId: produit.id,
+      quantite: quantiteInitiale,
+      date_stock: /* @__PURE__ */ new Date(),
+      type: "ENTR\xC9E"
+    }, { transaction });
+    return produit;
+  }
+  async getProduitById(id) {
+    return await models_default.Produit.findByPk(id, {
+      include: [
+        {
+          model: models_default.Stock,
+          as: "stock",
+          required: false,
+          attributes: []
+        },
+        {
+          model: models_default.Categorie,
+          as: "categorie",
+          required: false,
+          attributes: ["nom"]
+        },
+        {
+          model: models_default.Fournisseur,
+          as: "fournisseur",
+          required: false,
+          attributes: ["nom"]
+        }
+      ],
+      attributes: [
+        "id",
+        "nom",
+        "description",
+        "prix",
+        "image",
+        "categorieId",
+        "fournisseurId",
+        "seuilAlerte",
+        [models_default.Sequelize.fn("SUM", models_default.Sequelize.col("stock.quantite")), "totalQuantite"]
+      ],
+      group: ["Produit.id", "categorie.id", "fournisseur.id"]
+    });
+  }
+  async updateProduit(id, data) {
+    const produit = await models_default.Produit.findByPk(id);
+    if (!produit) return null;
+    await produit.update(data);
+    return produit;
+  }
+  async deleteProduit(id) {
+    const produit = await models_default.Produit.findByPk(id);
+    if (!produit) return null;
+    await produit.destroy();
+    return true;
+  }
+};
+var ProduitService_default = new ProduitService();
+
 // src/controllers/ProduitController.js
 var ProduitController = class {
-  async getAll(req, res) {
+  async getAll(req2, res) {
     try {
-      const Produits = await models_default.Produit.findAll({
-        include: [
-          {
-            model: models_default.Stock,
-            as: "stock",
-            required: false,
-            attributes: ["quantite"]
-          },
-          {
-            model: models_default.Categorie,
-            as: "categorie",
-            required: false,
-            attributes: ["nom"]
-          },
-          {
-            model: models_default.Fournisseur,
-            as: "fournisseur",
-            required: false,
-            attributes: ["nom"]
-          }
-        ]
-      });
-      res.json(Produits);
+      const produits = await ProduitService_default.getAllProduits();
+      res.json(produits);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des Produits" });
     }
   }
-  async create(req, res) {
+  async create(req2, res) {
     const transaction = await models_default.sequelize.transaction();
     try {
-      const imagePath = req.file ? req.file.path : null;
-      if (!req.body.nom || !req.body.prix) {
+      const imagePath = req2.file ? req2.file.path : null;
+      if (!req2.body.nom || !req2.body.prix) {
         return res.status(400).json({ message: "Le nom et le prix sont obligatoires" });
       }
-      const produit = await models_default.Produit.create(
-        {
-          nom: req.body.nom,
-          prix: req.body.prix,
-          description: req.body.description || "",
-          image: imagePath,
-          qte: req.body.qte,
-          fournisseurId: req.body.fournisseurId,
-          categorieId: req.body.categorieId
-        },
-        { transaction }
-      );
-      const quantiteInitiale = req.body.qte ? parseInt(req.body.qte, 10) : 0;
-      await models_default.Stock.create(
-        {
-          produitId: produit.id,
-          quantite: quantiteInitiale,
-          date_stock: /* @__PURE__ */ new Date(),
-          type: "Entree"
-        },
-        { transaction }
-      );
+      const produit = await ProduitService_default.createProduit(req2.body, imagePath, transaction);
       await transaction.commit();
       res.status(201).json({ message: "Produit cr\xE9\xE9 avec succ\xE8s", produit });
     } catch (error) {
@@ -68763,41 +68823,19 @@ var ProduitController = class {
       res.status(500).json({ message: "Erreur lors de la cr\xE9ation du produit" });
     }
   }
-  async update(req, res) {
+  async update(req2, res) {
     try {
-      const produit = await models_default.Produit.findByPk(req.params.id);
+      const produit = await ProduitService_default.updateProduit(req2.params.id, req2.body);
       if (!produit) return res.status(404).json({ message: "Produit introuvable" });
-      await produit.update(req.body);
       res.json(produit);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Erreur lors de la mise \xE0 jour du Produit" });
     }
   }
-  async getById(req, res) {
+  async getById(req2, res) {
     try {
-      const produit = await models_default.Produit.findByPk(req.params.id, {
-        include: [
-          {
-            model: models_default.Stock,
-            as: "stock",
-            required: false,
-            attributes: ["quantite"]
-          },
-          {
-            model: models_default.Categorie,
-            as: "categorie",
-            required: false,
-            attributes: ["nom"]
-          },
-          {
-            model: models_default.Fournisseur,
-            as: "fournisseur",
-            required: false,
-            attributes: ["nom"]
-          }
-        ]
-      });
+      const produit = await ProduitService_default.getProduitById(req2.params.id);
       if (!produit) return res.status(404).json({ message: "Produit introuvable" });
       res.json(produit);
     } catch (error) {
@@ -68805,11 +68843,10 @@ var ProduitController = class {
       res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du Produit" });
     }
   }
-  async delete(req, res) {
+  async delete(req2, res) {
     try {
-      const produit = await models_default.Produit.findByPk(req.params.id);
-      if (!produit) return res.status(404).json({ message: "Produit introuvable" });
-      await produit.destroy();
+      const deleted = await ProduitService_default.deleteProduit(req2.params.id);
+      if (!deleted) return res.status(404).json({ message: "Produit introuvable" });
       res.json({ message: "Produit supprim\xE9" });
     } catch (error) {
       console.error(error);
@@ -68823,10 +68860,10 @@ var ProduitController_default = new ProduitController();
 var router = Router();
 var upload = (0, import_multer.default)({
   storage: import_multer.default.diskStorage({
-    destination: (req, file, cb2) => {
+    destination: (req2, file, cb2) => {
       cb2(null, "uploads/");
     },
-    filename: (req, file, cb2) => {
+    filename: (req2, file, cb2) => {
       cb2(null, Date.now() + "-" + file.originalname);
     }
   })
@@ -68843,7 +68880,7 @@ import { Router as Router2 } from "express";
 
 // src/controllers/fournisseurController.js
 var FournisseurController = class {
-  async getAll(req, res) {
+  async getAll(req2, res) {
     try {
       const fournisseurs = await models_default.Fournisseur.findAll();
       res.json(fournisseurs);
@@ -68852,18 +68889,18 @@ var FournisseurController = class {
       res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des fournisseurs" });
     }
   }
-  async create(req, res) {
+  async create(req2, res) {
     try {
-      const fournisseur = await models_default.Fournisseur.create(req.body);
+      const fournisseur = await models_default.Fournisseur.create(req2.body);
       res.json(fournisseur);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Erreur lors de la cr\xE9ation du fournisseur", error });
     }
   }
-  async getById(req, res) {
+  async getById(req2, res) {
     try {
-      const fournisseur = await models_default.Fournisseur.findByPk(req.params.id);
+      const fournisseur = await models_default.Fournisseur.findByPk(req2.params.id);
       if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
       res.json(fournisseur);
     } catch (error) {
@@ -68871,20 +68908,20 @@ var FournisseurController = class {
       res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du fournisseur" });
     }
   }
-  async update(req, res) {
+  async update(req2, res) {
     try {
-      const fournisseur = await models_default.Fournisseur.findByPk(req.params.id);
+      const fournisseur = await models_default.Fournisseur.findByPk(req2.params.id);
       if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
-      await fournisseur.update(req.body);
+      await fournisseur.update(req2.body);
       res.json(fournisseur);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Erreur lors de la mise \xE0 jour du fournisseur" });
     }
   }
-  async delete(req, res) {
+  async delete(req2, res) {
     try {
-      const fournisseur = await models_default.Fournisseur.findByPk(req.params.id);
+      const fournisseur = await models_default.Fournisseur.findByPk(req2.params.id);
       if (!fournisseur) return res.status(404).json({ message: "Fournisseur introuvable" });
       await fournisseur.destroy();
       res.json({ message: "Fournisseur supprim\xE9" });
@@ -68908,61 +68945,131 @@ var fournisseur_default2 = router2;
 // src/routes/vente.js
 import { Router as Router3 } from "express";
 
+// src/services/StockService.js
+var StockService = class {
+  async getStock(produitId) {
+    return await models_default.Stock.findOne({ where: { produitId } });
+  }
+  async getStockRestant(produitId) {
+    const entrees2 = await models_default.Stock.sum("quantite", {
+      where: { produitId, type_mouvement: "ENTR\xC9E" }
+    });
+    const sorties2 = await models_default.Stock.sum("quantite", {
+      where: { produitId, type_mouvement: "SORTIE" }
+    });
+    if (!entrees2 && !sorties2) return null;
+    return entrees2 - Math.abs(sorties2);
+  }
+};
+var StockService_default = new StockService();
+
+// src/services/VenteService.js
+var VenteService = class {
+  async getAllVentes() {
+    return await models_default.Vente.findAll({
+      include: [
+        {
+          model: models_default.Ventedetail,
+          as: "ventedetails",
+          required: false,
+          include: [
+            {
+              model: models_default.Produit,
+              as: "produit",
+              required: false,
+              include: [
+                {
+                  model: models_default.Categorie,
+                  as: "categorie",
+                  required: false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    });
+  }
+  async createVentes(products) {
+    const transaction = await models_default.sequelize.transaction();
+    try {
+      for (const produit of products) {
+        const stockActuel = await StockService_default.getStockRestant(req.params.produitId);
+        if (!entrees && !sorties) {
+          throw new Error(`Produit ID ${produit.produitId} non trouv\xE9 en stock`);
+        }
+        if (stockActuel < produit.quantite) {
+          throw new Error(`Stock insuffisant pour le produit ${produit.nom}`);
+        }
+      }
+      const createdVentesDetails = await Promise.all(products.map(async (produit) => {
+        await models_default.Stock.create({
+          produitId: produit.produitId,
+          quantite: -1 * produit.quantite,
+          date_stock: /* @__PURE__ */ new Date(),
+          type_mouvement: "SORTIE"
+        }, { transaction });
+        const produitCopie = { ...produit, dateVente: /* @__PURE__ */ new Date() };
+        const vente = await models_default.Vente.create(produitCopie, { transaction });
+        const venteDetails = { ...produit, venteId: vente.id };
+        return await models_default.Ventedetail.create(venteDetails, { transaction });
+      }));
+      await transaction.commit();
+      return createdVentesDetails;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  }
+  async updateVente(id, data) {
+    const vente = await models_default.Vente.findByPk(id);
+    if (!vente) throw new Error("Vente introuvable");
+    return await vente.update(data);
+  }
+  async deleteVente(id) {
+    const vente = await models_default.Vente.findByPk(id);
+    if (!vente) throw new Error("Vente introuvable");
+    await vente.destroy();
+  }
+};
+var VenteService_default = new VenteService();
+
 // src/controllers/VenteController.js
 var VenteController = class {
-  async getAllVentes(req, res) {
+  async getAll(req2, res) {
     try {
-      const Ventes = await Vente.findAll();
-      res.json(Ventes);
+      const ventes = await VenteService_default.getAllVentes();
+      res.status(200).json(ventes);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des Ventes" });
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des ventes" });
     }
   }
-  async create(req, res) {
+  async create(req2, res) {
     try {
-      const products = req.body;
-      await Promise.all(products.map(async (element) => {
-        const stock = await Stock.findOne({ where: { produitId: element.produitId } });
-        if (!stock) {
-          throw new Error(`Produit ${element.produitId} non trouv\xE9 en stock.`);
-        }
-        const newQte = stock.quantite - element.quantite;
-        await stock.update({ quantite: newQte });
-        const vente = await Vente.create(element);
-        const venteDetails = { ...element, venteId: vente.id };
-        await VenteDetail.create(venteDetails);
-      }));
-      res.json({ message: "Ventes cr\xE9\xE9es avec succ\xE8s" });
+      const created = await VenteService_default.createVentes(req2.body);
+      res.status(201).json({ message: "Ventes cr\xE9\xE9es avec succ\xE8s", data: created });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: error.message || "Erreur lors de la cr\xE9ation des ventes" });
+      res.status(500).json({ message: error.message });
     }
   }
-  async update(req, res) {
+  async update(req2, res) {
     try {
-      const vente = await Vente.findByPk(req.params.id);
-      if (!vente) {
-        return res.status(404).json({ message: "Vente introuvable" });
-      }
-      await vente.update(req.body);
-      res.json(vente);
+      const updated = await VenteService_default.updateVente(req2.params.id, req2.body);
+      res.json(updated);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Erreur lors de la mise \xE0 jour de la vente" });
+      res.status(500).json({ message: error.message });
     }
   }
-  async delete(req, res) {
+  async delete(req2, res) {
     try {
-      const vente = await Vente.findByPk(req.params.id);
-      if (!vente) {
-        return res.status(404).json({ message: "Vente introuvable" });
-      }
-      await vente.destroy();
+      await VenteService_default.deleteVente(req2.params.id);
       res.json({ message: "Vente supprim\xE9e avec succ\xE8s" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Erreur lors de la suppression de la vente" });
+      res.status(500).json({ message: error.message });
     }
   }
 };
@@ -68970,7 +69077,7 @@ var VenteController_default = new VenteController();
 
 // src/routes/vente.js
 var router3 = Router3();
-router3.get("/Ventes", VenteController_default.getAllVentes);
+router3.get("/Ventes", VenteController_default.getAll);
 router3.post("/Vente/create", VenteController_default.create);
 var vente_default2 = router3;
 
@@ -68979,17 +69086,24 @@ import { Router as Router4 } from "express";
 
 // src/controllers/StockController.js
 var StockController = class {
-  async getStock(req, res) {
-    const { produitId } = req.params;
+  async getStock(req2, res) {
     try {
-      const stock = await Stock.findOne({ where: { produitId } });
-      if (!stock) {
-        return res.status(404).json({ message: "Produit non trouv\xE9 en stock." });
-      }
-      return res.status(200).json({ stock: stock.quantite });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du stock." });
+      const stock = await StockService_default.getStock(req2.params.produitId);
+      if (!stock) return res.status(404).json({ message: "Produit non trouv\xE9 en stock." });
+      res.status(200).json({ stock: stock.quantite });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du stock." });
+    }
+  }
+  async getStockRestant(req2, res) {
+    try {
+      const stockRestant = await StockService_default.getStockRestant(req2.params.produitId);
+      if (stockRestant === null) return res.status(404).json({ message: "Produit non trouv\xE9 en stock." });
+      res.status(200).json({ stockRestant });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du stock restant." });
     }
   }
 };
@@ -68997,7 +69111,7 @@ var StockController_default = new StockController();
 
 // src/routes/stock.js
 var router4 = Router4();
-router4.post("/Stock", StockController_default.getStock);
+router4.get("/stocks/:produitId", StockController_default.getStockRestant);
 var stock_default2 = router4;
 
 // src/routes/categorie.js
@@ -69005,7 +69119,7 @@ import { Router as Router5 } from "express";
 
 // src/controllers/categorieController.js
 var CategorieController = class {
-  async getAll(req, res) {
+  async getAll(req2, res) {
     try {
       const Categories = await models_default.Categorie.findAll();
       res.json(Categories);
@@ -69014,29 +69128,29 @@ var CategorieController = class {
       res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des Categories" });
     }
   }
-  async create(req, res) {
+  async create(req2, res) {
     try {
-      const Categorie = await models_default.Categorie.create(req.body);
+      const Categorie = await models_default.Categorie.create(req2.body);
       res.json(Categorie);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Erreur lors de la cr\xE9ation du Categorie", error });
     }
   }
-  async update(req, res) {
+  async update(req2, res) {
     try {
-      const Categorie = await models_default.Categorie.findByPk(req.params.id);
+      const Categorie = await models_default.Categorie.findByPk(req2.params.id);
       if (!Categorie) return res.status(404).json({ message: "Categorie introuvable" });
-      await Categorie.update(req.body);
+      await Categorie.update(req2.body);
       res.json(Categorie);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Erreur lors de la mise \xE0 jour du Categorie" });
     }
   }
-  async delete(req, res) {
+  async delete(req2, res) {
     try {
-      const Categorie = await models_default.Categorie.findByPk(req.params.id);
+      const Categorie = await models_default.Categorie.findByPk(req2.params.id);
       if (!Categorie) return res.status(404).json({ message: "Categorie introuvable" });
       await Categorie.destroy();
       res.json({ message: "Categorie supprim\xE9" });
@@ -69045,9 +69159,9 @@ var CategorieController = class {
       res.status(500).json({ message: "Erreur lors de la suppression du Categorie" });
     }
   }
-  async getById(req, res) {
+  async getById(req2, res) {
     try {
-      const Categorie = await models_default.Categorie.findByPk(req.params.id);
+      const Categorie = await models_default.Categorie.findByPk(req2.params.id);
       if (!Categorie) return res.status(404).json({ message: "Categorie introuvable" });
       res.json(Categorie);
     } catch (error) {
@@ -69090,7 +69204,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/api", routes_default);
 app.use(express.static("../uploads"));
-app.get("/", (req, res) => {
+app.get("/", (req2, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.send("Bienvenue sur mon serveur Express !");
 });

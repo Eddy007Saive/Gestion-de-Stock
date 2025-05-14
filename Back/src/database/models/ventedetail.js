@@ -1,16 +1,10 @@
 import { Model ,DataTypes} from "sequelize";
 export default(sequelize ) => {
   class VenteDetail extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+
     static associate(models) {
-      VenteDetail.associate = (models) => {
         VenteDetail.belongsTo(models.Produit, { foreignKey: "produitId", as: "produit" });
         VenteDetail.belongsTo(models.Vente, { foreignKey: "venteId", as: "vente" });
-      };
     }
   }
   VenteDetail.init({

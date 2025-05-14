@@ -1,4 +1,4 @@
-import db from "@/database/models"; // Ajustez le chemin selon votre structure de dossiers
+import db from "@/database/models"; 
 
 class CategorieController {
     async getAll(req, res) {

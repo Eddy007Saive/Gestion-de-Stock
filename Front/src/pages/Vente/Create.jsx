@@ -5,8 +5,17 @@ import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { VenteSchema } from "@/validations/venteSchema";
 import ProduitSelect from "@/components/ProduitSelect";
-import { toast, ToastContainer } from "react-toastify";
+import toastify from "@/utils/toastify"
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { createVente } from "@/services/Vente";
+
+import {
+ TrashIcon,
+ CreditCardIcon,PlusCircleIcon
+  
+} from "@heroicons/react/24/solid";
 
 
 export function Create() {
@@ -21,9 +30,9 @@ export function Create() {
   const getStockProduit= async (id) =>{
     try {
       const response=await getStock(id)
-      return response.stock;
+      return response.stockRestant;
     } catch (error) {
-      console.log(error);
+      toastify.error("Erreur lors de la récupération du stock")
     }
   }
 
@@ -33,7 +42,7 @@ export function Create() {
       const response = await getProduits();
       setProduits(response.data);
     } catch (error) {
-      console.error("Erreur lors du chargement des Produits :", error);
+      toastify.error("Erreur lors de la récupération des produits");
     }
   };
 
@@ -63,8 +72,9 @@ export function Create() {
 
 
 
-  //Au selection du selecteur on ajoute les info du produit selectionner dans les input
+  // Au selection du selecteur on ajoute les info du produit selectionner dans les input
   const addProduit = (produit) => {
+
     if (produit) {
       setValue("produitId", produit.id);
       setValue("prixUnitaire", produit.prix);
@@ -85,6 +95,7 @@ export function Create() {
   const onSubmit = async (formData) => {
     //Récuperer le stock de produit disponible dans la base 
     const stockDispo= await getStockProduit(formData.produitId);
+
 
 
     if(formData.quantite > stockDispo){
@@ -126,11 +137,13 @@ export function Create() {
   const confirmSale =async ()=>{
       try {
         const response= await createVente(panier);
-        console.log(response);
-        toast.success("Vente valider")
+        toastify.success("Vente valider")
+        reset();
+        setPanier([]);
 
       } catch (error) {
-        console.log(error);
+        toastify.error("Commande non  valider")
+
       }
   }
 
@@ -139,7 +152,7 @@ export function Create() {
       <div className="lg:py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="shadow-lg p-4 w-full">
           <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-            Ajouter une vente
+            Ajouter une commande
           </h2>
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -208,9 +221,10 @@ export function Create() {
              {isFormFilled && <div className="flex justify-center mt-6">
                 <button
                   type="submit"
-                  className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
+                  className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
                 >
-                  Ajouter au panier
+                  <PlusCircleIcon className="h-5 w-5" >Panier</PlusCircleIcon>
+                  
                 </button>
               </div>}
             </form>
@@ -242,7 +256,7 @@ export function Create() {
                   <td className="px-4 py-2">{item.prixUnitaire}</td>
                   <td className="px-4 py-2">{item.total}</td>
                   <td className="px-4 py-2">
-                  <button onClick={() => deleteProdInPanier(item.produitId)}>Ar</button>
+                  <button onClick={() => deleteProdInPanier(item.produitId)}><TrashIcon className="h-5 w-5" /></button>
                   </td>
 
                 </tr>
@@ -252,11 +266,11 @@ export function Create() {
           <div className="flex justify-center mt-6">
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                  className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
                   hidden={panier.length === 0} 
                   onClick={()=>{confirmSale()}}
                 >
-                  Valider Achat
+                  <CreditCardIcon className="h-5 w-5" />
                 </button>
               </div>
       </div>

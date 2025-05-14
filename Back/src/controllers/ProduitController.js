@@ -1,33 +1,11 @@
+import ProduitService from "@/services/ProduitService.js";
 import db from "@/database/models";
-class ProduitController {
 
+class ProduitController {
     async getAll(req, res) {
         try {
-            const Produits = await db.Produit.findAll({
-                include: [
-                    {
-                        model: db.Stock,        
-                        as: 'stock',      
-                        required: false,    
-                        attributes: ['quantite'],  
-                    },
-
-                    {
-                        model: db.Categorie,        
-                        as: 'categorie',      
-                        required: false,    
-                        attributes: ['nom'],  
-                    },
-
-                    {
-                        model: db.Fournisseur,        
-                        as: 'fournisseur',      
-                        required: false,    
-                        attributes: ['nom'],  
-                    },
-                ],
-            });
-            res.json(Produits);
+            const produits = await ProduitService.getAllProduits();
+            res.json(produits);
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Erreur lors de la récupération des Produits" });
@@ -38,43 +16,17 @@ class ProduitController {
         const transaction = await db.sequelize.transaction();
         try {
             const imagePath = req.file ? req.file.path : null;
-   
+
             if (!req.body.nom || !req.body.prix) {
                 return res.status(400).json({ message: "Le nom et le prix sont obligatoires" });
             }
-   
-            const produit = await db.Produit.create(
-                {
-                    nom: req.body.nom,
-                    prix: req.body.prix,
-                    description: req.body.description || "",
-                    image: imagePath,
-                    qte: req.body.qte,
-                    fournisseurId: req.body.fournisseurId,
-                    categorieId: req.body.categorieId
 
-                },
-                { transaction }
-            );
-   
-            const quantiteInitiale = req.body.qte ? parseInt(req.body.qte, 10) : 0;
-   
-            await db.Stock.create(
-                {
-                    produitId: produit.id,
-                    quantite: quantiteInitiale,
-                    date_stock: new Date(),
-                    type:"Entree"
-                },
-                { transaction }
-            );
-   
+            const produit = await ProduitService.createProduit(req.body, imagePath, transaction);
             await transaction.commit();
-   
             res.status(201).json({ message: "Produit créé avec succès", produit });
         } catch (error) {
             await transaction.rollback();
-   
+
             if (error instanceof db.Sequelize.ValidationError) {
                 return res.status(400).json({
                     message: "Erreur de validation",
@@ -84,17 +36,16 @@ class ProduitController {
                     }))
                 });
             }
-   
+
             console.error("Erreur lors de la création du produit :", error);
             res.status(500).json({ message: "Erreur lors de la création du produit" });
         }
     }
-   
+
     async update(req, res) {
         try {
-            const produit = await db.Produit.findByPk(req.params.id);
+            const produit = await ProduitService.updateProduit(req.params.id, req.body);
             if (!produit) return res.status(404).json({ message: "Produit introuvable" });
-            await produit.update(req.body);
             res.json(produit);
         } catch (error) {
             console.error(error);
@@ -104,28 +55,7 @@ class ProduitController {
 
     async getById(req, res) {
         try {
-            const produit = await db.Produit.findByPk(req.params.id, {
-                include: [
-                    {
-                        model: db.Stock,
-                        as: 'stock',
-                        required: false,
-                        attributes: ['quantite'],
-                    },
-                    {
-                        model: db.Categorie,
-                        as: 'categorie',
-                        required: false,
-                        attributes: ['nom'],
-                    },
-                    {
-                        model: db.Fournisseur,
-                        as: 'fournisseur',
-                        required: false,
-                        attributes: ['nom'],
-                    },
-                ],
-            });
+            const produit = await ProduitService.getProduitById(req.params.id);
             if (!produit) return res.status(404).json({ message: "Produit introuvable" });
             res.json(produit);
         } catch (error) {
@@ -136,9 +66,8 @@ class ProduitController {
 
     async delete(req, res) {
         try {
-            const produit = await db.Produit.findByPk(req.params.id);
-            if (!produit) return res.status(404).json({ message: "Produit introuvable" });
-            await produit.destroy();
+            const deleted = await ProduitService.deleteProduit(req.params.id);
+            if (!deleted) return res.status(404).json({ message: "Produit introuvable" });
             res.json({ message: "Produit supprimé" });
         } catch (error) {
             console.error(error);

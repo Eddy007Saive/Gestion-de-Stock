@@ -1,4 +1,3 @@
-// models/stock.js
 import { Model, DataTypes } from 'sequelize';
 
 export default (sequelize) => {

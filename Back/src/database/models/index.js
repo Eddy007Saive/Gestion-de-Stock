@@ -38,7 +38,6 @@ db.Vente = Vente(sequelize, Sequelize.DataTypes);
 db.Ventedetail = Ventedetail(sequelize, Sequelize.DataTypes);
 
 
-
 // Gestion des associations
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
