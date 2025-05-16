@@ -68678,43 +68678,40 @@ var models_default = db;
 
 // src/services/ProduitService.js
 var ProduitService = class {
-  async getAllVentes() {
-    return await models_default.Vente.findAll({
+  async getAllProduits() {
+    return await models_default.Produit.findAll({
       include: [
         {
-          model: models_default.Ventedetail,
-          as: "ventedetails",
+          model: models_default.Categorie,
+          as: "categorie",
           required: false,
-          attributes: ["quantite", "prixUnitaire", "produitId", "venteId"],
-          include: [
-            {
-              model: models_default.Produit,
-              as: "produit",
-              required: false,
-              attributes: ["nom", "categorieId"],
-              include: [
-                {
-                  model: models_default.Categorie,
-                  as: "categorie",
-                  required: false,
-                  attributes: ["nom"]
-                }
-              ]
-            }
-          ]
+          attributes: ["nom"]
+        },
+        {
+          model: models_default.Fournisseur,
+          as: "fournisseur",
+          required: false,
+          attributes: ["nom"]
+        },
+        {
+          model: models_default.Stock,
+          as: "stock",
+          required: false,
+          attributes: []
         }
       ],
       attributes: [
-        [models_default.Sequelize.fn("DATE", models_default.Sequelize.col("dateVente")), "date"],
-        [models_default.Sequelize.fn("SUM", models_default.Sequelize.col("total")), "totalParDate"]
+        "id",
+        "nom",
+        "description",
+        "prix",
+        "image",
+        "categorieId",
+        "fournisseurId",
+        "seuilAlerte",
+        [models_default.Sequelize.fn("SUM", models_default.Sequelize.col("stock.quantite")), "totalQuantite"]
       ],
-      group: [
-        models_default.Sequelize.fn("DATE", models_default.Sequelize.col("Vente.dateVente")),
-        "ventedetails.id",
-        "ventedetails.produit.id",
-        "ventedetails.produit.categorie.id"
-      ],
-      order: [[models_default.Sequelize.fn("DATE", models_default.Sequelize.col("dateVente")), "DESC"]]
+      group: ["Produit.id", "categorie.id", "fournisseur.id"]
     });
   }
   async createProduit(data, imagePath, transaction) {
@@ -68960,6 +68957,17 @@ var StockService = class {
     if (!entrees2 && !sorties2) return null;
     return entrees2 - Math.abs(sorties2);
   }
+  async createStock(produitId, quantiteInitiale) {
+    const produit = await models_default.Produit.findByPk(produitId);
+    if (!produit) return null;
+    const stock = await models_default.Stock.create({
+      produitId,
+      quantite: quantiteInitiale,
+      date_stock: /* @__PURE__ */ new Date(),
+      type_mouvement: "ENTR\xC9E"
+    });
+    return stock;
+  }
 };
 var StockService_default = new StockService();
 
@@ -69106,12 +69114,24 @@ var StockController = class {
       res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration du stock restant." });
     }
   }
+  async createStock(req2, res) {
+    try {
+      const { produitId, quantite } = req2.body;
+      const stock = await StockService_default.createStock(produitId, quantite);
+      if (!stock) return res.status(404).json({ message: "Produit non trouv\xE9." });
+      res.status(201).json({ message: "Stock cr\xE9\xE9 avec succ\xE8s.", stock });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erreur lors de la cr\xE9ation du stock." });
+    }
+  }
 };
 var StockController_default = new StockController();
 
 // src/routes/stock.js
 var router4 = Router4();
 router4.get("/stocks/:produitId", StockController_default.getStockRestant);
+router4.post("/stocks", StockController_default.createStock);
 var stock_default2 = router4;
 
 // src/routes/categorie.js

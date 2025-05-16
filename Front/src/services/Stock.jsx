@@ -12,3 +12,14 @@ export const getStock = async (id) => {
     }
 };
 
+export const createStock=async (data) => {
+console.log(data);
+    try {
+        const response = await apiClient.post(url, data);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la création du stock :", error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || "Impossible de créer le stock.");
+    }
+}
+

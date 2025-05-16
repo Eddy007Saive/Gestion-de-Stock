@@ -18,6 +18,21 @@ class StockService {
 
     return entrees - Math.abs(sorties);
   }
+
+  async createStock(produitId, quantiteInitiale) {
+    const produit = await db.Produit.findByPk(produitId);
+    if (!produit) return null;
+
+    const stock = await db.Stock.create({
+      produitId,
+      quantite: quantiteInitiale,
+      date_stock: new Date(),
+      type_mouvement: "ENTRÉE",
+    });
+
+    return stock;
+  }
+
 }
 
 export default new StockService();

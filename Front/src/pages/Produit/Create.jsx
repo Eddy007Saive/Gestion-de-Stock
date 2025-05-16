@@ -107,7 +107,7 @@ export function Create() {
 
   return (
     <section className="bg-white dark:bg-gray-900 p-4">
-      <div className="mx-auto max-w-6xl lg:py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="mx-auto  lg:py-8  md:grid-cols-2 gap-8">
         {/* Formulaire d'ajout */}
         <div className="shaow-lg p-4 ">
           <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
@@ -264,42 +264,6 @@ export function Create() {
               </div>
             </form>
           </FormProvider>
-        </div>
-
-        {/* Tableau des Produits */}
-        <div>
-          <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">Liste des Produits</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border px-4 py-2">Nom</th>
-                  <th className="border px-4 py-2">Quantité</th>
-                  <th className="border px-4 py-2">Prix</th>
-                  <th className="border px-4 py-2">Action</th>
-
-                </tr>
-              </thead>
-              <tbody>
-                {produits.length > 0 ? (
-                  produits.map((produit) => (
-                    <tr key={produit.id} className="text-center">
-                      <td className="border px-4 py-2">{produit.nom}</td>
-                      <td className="border px-4 py-2">{produit.stock.quantite}</td>
-                      <td className="border px-4 py-2">{produit.prix} Ar</td>
-                      <td className="border px-4 py-2">
-                      </td>
-
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className="text-center py-4">Aucun produit disponible</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
       <ToastContainer/>

@@ -1,45 +1,44 @@
 import db from "@/database/models";
 
 class ProduitService {
-    async getAllVentes() {
-    return await db.Vente.findAll({
-        include: [
-            {
-                model: db.Ventedetail,
-                as: 'ventedetails',
-                required: false,
-                attributes: ['quantite', 'prixUnitaire', 'produitId', 'venteId'],
-                include: [
-                    {
-                        model: db.Produit,
-                        as: 'produit',
-                        required: false,
-                        attributes: ['nom', 'categorieId'],
-                        include: [
-                            {
-                                model: db.Categorie,
-                                as: 'categorie',
-                                required: false,
-                                attributes: ['nom'],
-                            }
-                        ]
-                    }
-                ]
-            }
-        ],
-        attributes: [
-            [db.Sequelize.fn('DATE', db.Sequelize.col('dateVente')), 'date'],
-            [db.Sequelize.fn('SUM', db.Sequelize.col('total')), 'totalParDate']
-        ],
-        group: [
-            db.Sequelize.fn('DATE', db.Sequelize.col('Vente.dateVente')),
-            'ventedetails.id',
-            'ventedetails.produit.id',
-            'ventedetails.produit.categorie.id'
-        ],
-        order: [[db.Sequelize.fn('DATE', db.Sequelize.col('dateVente')), 'DESC']]
-    });
-}
+    async getAllProduits() {
+        return await db.Produit.findAll({
+            include: [
+                {
+                    model: db.Categorie,
+                    as: 'categorie',
+                    required: false,
+                    attributes: ['nom'],
+                }
+                ,
+                {
+                    model: db.Fournisseur,
+                    as: 'fournisseur',
+                    required: false,
+                    attributes: ['nom'],
+                },
+                {
+                    model: db.Stock,
+                    as: 'stock',
+                    required: false,
+                    attributes: [],
+                }
+            ],
+            attributes: [
+                'id',
+                'nom',
+                'description',
+                'prix',
+                'image',
+                'categorieId',
+                'fournisseurId',
+                'seuilAlerte',
+                [db.Sequelize.fn('SUM', db.Sequelize.col('stock.quantite')), 'totalQuantite']
+            ],
+            group: ['Produit.id', 'categorie.id', 'fournisseur.id']
+            
+        });
+    }
 
 
     async createProduit(data, imagePath, transaction) {

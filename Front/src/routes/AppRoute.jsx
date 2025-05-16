@@ -5,6 +5,8 @@ import { Create as NewProduit ,liste as Produit,Update as UpdateProduct} from "@
 import { Create as NewFournisseur,liste as Fournisseur,Update as UpdateFournisseur } from "@/pages/Fournisseur";
 import { Create as NewCommande , liste as Commande } from "@/pages/Vente";
 import { Create as NewCategorie,liste as Category ,Update as UpdateCategory } from "@/pages/Categorie";
+import { ListeApprovisionnement } from "@/pages/Achat";
+
 
 
 
@@ -33,6 +35,10 @@ export function AppRoute() {
         {/* Route pour la création de commande */}
         <Route path="commande" element={<Commande />} />
         <Route path="nouveau/commande" element={<NewCommande />} />
+
+        <Route path="approvisionnement" element={<ListeApprovisionnement />} />
+
+
 
         {/* Redirection par défaut vers home */}
         <Route index element={<Navigate to="home" replace />} />
