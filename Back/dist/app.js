@@ -69338,7 +69338,7 @@ var AchatService = class {
         quantite: product.quantite,
         prix_unitaire: product.prixUnitaire
       }, { transaction });
-      const stock = await models_default.Stock.create({
+      await models_default.Stock.create({
         produitId: product.produitId,
         quantite: product.quantite,
         date_stock: /* @__PURE__ */ new Date(),

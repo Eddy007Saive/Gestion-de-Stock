@@ -48,7 +48,7 @@ class AchatService {
                 prix_unitaire: product.prixUnitaire
             }, { transaction });
 
-              const stock = await db.Stock.create({
+            await db.Stock.create({
                   produitId:product.produitId,
                   quantite: product.quantite,
                   date_stock: new Date(),
