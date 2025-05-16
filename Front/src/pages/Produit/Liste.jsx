@@ -36,7 +36,7 @@ export function liste() {
 
                     Produits
                     </span>
-                    <Link to="/dashboard/produit/nouveau">
+                    <Link to="/dashboard/nouveau/produit">
                         Nouveau Produit
                     </Link>
                 </div>
