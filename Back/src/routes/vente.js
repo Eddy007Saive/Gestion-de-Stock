@@ -3,8 +3,8 @@ import VenteController from '@/controllers/VenteController.js';
 
 const router = Router();
 
-router.get("/Ventes", VenteController.getAll);
-router.post("/Vente/create", VenteController.create);
+router.get("/ventes", VenteController.getAll);
+router.post("/ventes", VenteController.create);
 
 
 export default router;

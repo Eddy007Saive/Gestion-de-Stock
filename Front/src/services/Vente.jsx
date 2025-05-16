@@ -1,8 +1,8 @@
 import apiClient from "@/utils/ApiClient";
-const url="/Vente"
+const url="/ventes"
 
 // Fonction pour récupérer tous les utilisateurs
-export const getVentes = () => apiClient.get(`${url}s`);
+export const getVentes = () => apiClient.get(url);
 
 export const findVente =async  (id) =>{
     try {
@@ -15,7 +15,7 @@ export const findVente =async  (id) =>{
 // Fonction pour créer un utilisateur
 export const createVente= async (data,config) => {
     try {
-        const response=await apiClient.post(`${url}/create`, data,config);
+        const response=await apiClient.post(url, data,config);
         return response;
     } catch (error) {
         console.log(error);

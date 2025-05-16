@@ -1,5 +1,6 @@
 import db from "@/database/models";
 
+
 class ProduitService {
     async getAllProduits() {
         return await db.Produit.findAll({
@@ -11,12 +12,6 @@ class ProduitService {
                     attributes: ['nom'],
                 }
                 ,
-                {
-                    model: db.Fournisseur,
-                    as: 'fournisseur',
-                    required: false,
-                    attributes: ['nom'],
-                },
                 {
                     model: db.Stock,
                     as: 'stock',
@@ -31,38 +26,52 @@ class ProduitService {
                 'prix',
                 'image',
                 'categorieId',
-                'fournisseurId',
                 'seuilAlerte',
                 [db.Sequelize.fn('SUM', db.Sequelize.col('stock.quantite')), 'totalQuantite']
             ],
-            group: ['Produit.id', 'categorie.id', 'fournisseur.id']
-            
+            group: ['Produit.id', 'categorie.id']
+
         });
     }
 
 
-    async createProduit(data, imagePath, transaction) {
-        const produit = await db.Produit.create({
-            nom: data.nom,
-            prix: data.prix,
-            description: data.description || "",
-            image: imagePath,
-            qte: data.qte,
-            fournisseurId: data.fournisseurId,
-            categorieId: data.categorieId
-        }, { transaction });
+    
+async createProduit(data, imagePath, transaction) {
+    const produit = await db.Produit.create({
+        nom: data.nom,
+        prix: data.prix,
+        description: data.description || "",
+        image: imagePath,
+        qte: data.qte,
+        seuilAlerte: data.seuilAlerte,
+        categorieId: data.categorieId
+    }, { transaction });
 
-        const quantiteInitiale = data.qte ? parseInt(data.qte, 10) : 0;
+    const quantiteInitiale = data.qte ? parseInt(data.qte, 10) : 0;
 
+    if (quantiteInitiale > 0) {
         await db.Stock.create({
             produitId: produit.id,
             quantite: quantiteInitiale,
             date_stock: new Date(),
-            type: "ENTRÉE"
+            type_mouvement: "ENTREE"
         }, { transaction });
 
-        return produit;
+        const approvisionnement = await db.Approvisionnement.create({
+            date: new Date(),
+            fournisseurId: data.fournisseurId,
+        }, { transaction });
+
+        await db.ApprovisionnementProduit.create({
+            produitId: produit.id,
+            quantite: quantiteInitiale,
+            approvisionnementId: approvisionnement.id,
+            prix_unitaire: data.prix
+        }, { transaction });
     }
+
+    return produit;
+}
 
     async getProduitById(id) {
         return await db.Produit.findByPk(id, {

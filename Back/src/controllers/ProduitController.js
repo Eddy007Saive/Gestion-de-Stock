@@ -28,6 +28,7 @@ class ProduitController {
             await transaction.rollback();
 
             if (error instanceof db.Sequelize.ValidationError) {
+                console.error("Erreur de validation :", error);
                 return res.status(400).json({
                     message: "Erreur de validation",
                     errors: error.errors.map(err => ({

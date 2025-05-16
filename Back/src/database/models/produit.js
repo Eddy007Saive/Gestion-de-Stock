@@ -1,23 +1,25 @@
-// models/produit.js
 import { Model, DataTypes } from 'sequelize';
 
 export default (sequelize) => {
   class Produit extends Model {
     static associate(models) {
-      Produit.belongsTo(models.Fournisseur, {
-        foreignKey: 'fournisseurId',
-        as: 'fournisseur',
-      });
-
+      // Relation avec le stock
       Produit.hasOne(models.Stock, {
         foreignKey: 'produitId',
         as: 'stock',
       });
-      
-      Produit.belongsTo(models.Categorie,{
-        foreignKey:"categorieId",
-        as:"categorie"
-      })
+
+      // Relation avec la catégorie
+      Produit.belongsTo(models.Categorie, {
+        foreignKey: 'categorieId',
+        as: 'categorie',
+      });
+
+      // Historique des approvisionnements
+      Produit.hasMany(models.ApprovisionnementProduit, {
+        foreignKey: 'produitId',
+        as: 'approvisionnements'
+      });
     }
   }
 
@@ -26,8 +28,8 @@ export default (sequelize) => {
       seuilAlerte: {
         type: DataTypes.STRING,
         allowNull: false,
-       },
-       
+      },
+
       nom: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -45,6 +47,7 @@ export default (sequelize) => {
           },
         },
       },
+
       prix: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -58,6 +61,7 @@ export default (sequelize) => {
           },
         },
       },
+
       description: {
         type: DataTypes.TEXT,
         allowNull: false,
@@ -71,24 +75,15 @@ export default (sequelize) => {
           },
         },
       },
-      fournisseurId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          isInt: {
-            msg: 'Le fournisseurId doit être un nombre entier',
-          },
-        },
-      },
+
       image: {
         type: DataTypes.STRING,
         allowNull: true,
       },
 
       categorieId: {
-        type:DataTypes.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
-      
       }
     },
     {
@@ -96,7 +91,7 @@ export default (sequelize) => {
       modelName: 'Produit',
       hooks: {
         beforeSave: (produit) => {
-          produit.nom = produit.nom.toUpperCase(); // Nom en majuscule avant save
+          produit.nom = produit.nom.toUpperCase(); // Nom en majuscules avant sauvegarde
         },
       },
     }

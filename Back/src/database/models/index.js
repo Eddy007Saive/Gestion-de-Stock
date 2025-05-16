@@ -7,6 +7,8 @@ import Stock from '@/database/models/stock.js';
 import Categorie from '@/database/models/categorie.js';
 import Vente from '@/database/models/vente.js';
 import Ventedetail from '@/database/models/ventedetail.js';
+import Approvisionnement from '@/database/models/approvisionnement.js';
+import ApprovisionnementProduit from '@/database/models/approvisionnementproduit.js';
 
 
 
@@ -36,6 +38,10 @@ db.Stock = Stock(sequelize, Sequelize.DataTypes);
 db.Fournisseur = Fournisseur(sequelize, Sequelize.DataTypes);
 db.Vente = Vente(sequelize, Sequelize.DataTypes);
 db.Ventedetail = Ventedetail(sequelize, Sequelize.DataTypes);
+db.Approvisionnement = Approvisionnement(sequelize, Sequelize.DataTypes);
+db.ApprovisionnementProduit = ApprovisionnementProduit(sequelize, Sequelize.DataTypes);
+
+
 
 
 // Gestion des associations

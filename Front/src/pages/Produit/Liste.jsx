@@ -24,7 +24,7 @@ export function liste() {
         setProduit(response.data)
     }
 
-    const columns = ["nom", "prix", "stockActuel","seuilAlerte", "categorie","fournisseur","Edit"];
+    const columns = ["nom", "prix", "stockActuel","seuilAlerte", "categorie","Edit"];
 
   return (
         <div className="mt-12 mb-8 flex flex-col gap-12">
@@ -62,7 +62,7 @@ export function liste() {
                   </tr>
                 </thead>
                 <tbody>
-                {produits.map(({ id,nom, prix, seuilAlerte, categorie,fournisseur, totalQuantite}, key)=> {
+                {produits.map(({ id,nom, prix, seuilAlerte, categorie, totalQuantite}, key)=> {
                     const className = `py-3 px-5 ${
                       key === produits.length - 1 ? "" : "border-b border-blue-gray-50"
                     }`;
@@ -110,11 +110,7 @@ export function liste() {
                             </Typography>
                           </td>
 
-                          <td className={className}>
-                            <Typography className="text-xs font-semibold text-blue-gray-600">
-                              {fournisseur.nom}
-                            </Typography>
-                          </td>
+                    
               
                           <td className={className}>
                             <Typography

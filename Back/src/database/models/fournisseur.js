@@ -1,17 +1,32 @@
 import { Model, DataTypes } from 'sequelize';
-export default (sequelize, DataTypes) => {
+
+export default (sequelize) => {
   class Fournisseur extends Model {
-  
     static associate(models) {
-      Fournisseur.hasMany(models.Produit,{ foreignKey: "fournisseurId", as: "Produits" })
+      // Un fournisseur peut faire plusieurs approvisionnements
+      Fournisseur.hasMany(models.Approvisionnement, {
+        foreignKey: 'fournisseurId',
+        as: 'approvisionnements'
+      });
     }
   }
-  Fournisseur.init({
-    nom: DataTypes.STRING,
-    contact: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Fournisseur',
-  });
+
+  Fournisseur.init(
+    {
+      nom: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      contact: {
+        type: DataTypes.STRING,
+        allowNull: true
+      }
+    },
+    {
+      sequelize,
+      modelName: 'Fournisseur'
+    }
+  );
+
   return Fournisseur;
 };

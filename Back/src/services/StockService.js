@@ -28,7 +28,7 @@ class StockService {
       quantite: quantiteInitiale,
       date_stock: new Date(),
       type_mouvement: "ENTRÉE",
-    });
+    },);
 
     return stock;
   }

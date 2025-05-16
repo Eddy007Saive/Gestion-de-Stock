@@ -12,8 +12,7 @@ module.exports = {
       nom: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique:true
-
+        unique: true
       },
       prix: {
         type: Sequelize.INTEGER,
@@ -23,48 +22,40 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false
       },
-      image:{
-        type:Sequelize.STRING,
-        allowNull: false
-      },
-      fournisseurId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: "Fournisseurs", key: "id" },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+      image: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       stockActuel: {
         type: Sequelize.INTEGER,
         defaultValue: 0
       },
-
-      categorieId: {
-        type: Sequelize.INTEGER,
-        references: { model: "Categories", key: "id" },
-        onUpdate: "CASCADE"
-      },
-
       seuilAlerte: {
         type: Sequelize.INTEGER,
         defaultValue: 10
       },
-
       categorieId: {
         type: Sequelize.INTEGER,
-        references: { model: "Categories", key: "id" },
-        onUpdate: "CASCADE"
+        references: {
+          model: 'Categories',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW')
       }
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Produits');
   }

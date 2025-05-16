@@ -12,10 +12,32 @@ export default (sequelize) => {
 
   Stock.init(
     {
-      quantite: DataTypes.INTEGER,
-      produitId: DataTypes.INTEGER,
-      type_mouvement: DataTypes.STRING,
-      date_stock: DataTypes.DATE,
+      quantite: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          isInt: true,
+          min: 1
+        }
+      },
+      produitId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Produits',
+          key: 'id'
+        }
+      },
+      type_mouvement: {
+        type: DataTypes.ENUM('ENTREE', 'SORTIE'),
+        allowNull: false,
+        defaultValue: 'ENTREE'
+      },
+      date_stock: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
+      }
     },
     {
       sequelize,

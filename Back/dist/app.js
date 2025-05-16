@@ -68325,7 +68325,7 @@ var import_cors = __toESM(require_lib(), 1);
 import express from "express";
 
 // src/routes/index.js
-import { Router as Router6 } from "express";
+import { Router as Router7 } from "express";
 
 // src/routes/produit.js
 var import_multer = __toESM(require_multer(), 1);
@@ -68440,10 +68440,6 @@ import process2 from "process";
 var produit_default = (sequelize2) => {
   class Produit extends Model {
     static associate(models) {
-      Produit.belongsTo(models.Fournisseur, {
-        foreignKey: "fournisseurId",
-        as: "fournisseur"
-      });
       Produit.hasOne(models.Stock, {
         foreignKey: "produitId",
         as: "stock"
@@ -68451,6 +68447,10 @@ var produit_default = (sequelize2) => {
       Produit.belongsTo(models.Categorie, {
         foreignKey: "categorieId",
         as: "categorie"
+      });
+      Produit.hasMany(models.ApprovisionnementProduit, {
+        foreignKey: "produitId",
+        as: "approvisionnements"
       });
     }
   }
@@ -68503,15 +68503,6 @@ var produit_default = (sequelize2) => {
           }
         }
       },
-      fournisseurId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          isInt: {
-            msg: "Le fournisseurId doit \xEAtre un nombre entier"
-          }
-        }
-      },
       image: {
         type: DataTypes.STRING,
         allowNull: true
@@ -68546,10 +68537,32 @@ var stock_default = (sequelize2) => {
   }
   Stock.init(
     {
-      quantite: DataTypes.INTEGER,
-      produitId: DataTypes.INTEGER,
-      type_mouvement: DataTypes.STRING,
-      date_stock: DataTypes.DATE
+      quantite: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          isInt: true,
+          min: 1
+        }
+      },
+      produitId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Produits",
+          key: "id"
+        }
+      },
+      type_mouvement: {
+        type: DataTypes.ENUM("ENTREE", "SORTIE"),
+        allowNull: false,
+        defaultValue: "ENTREE"
+      },
+      date_stock: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
+      }
     },
     {
       sequelize: sequelize2,
@@ -68630,20 +68643,89 @@ var ventedetail_default = (sequelize2) => {
   return VenteDetail;
 };
 
-// src/database/models/fournisseur.js
-var fournisseur_default = (sequelize2, DataTypes2) => {
-  class Fournisseur extends Model {
+// src/database/models/approvisionnement.js
+var approvisionnement_default = (sequelize2) => {
+  class Approvisionnement extends Model {
     static associate(models) {
-      Fournisseur.hasMany(models.Produit, { foreignKey: "fournisseurId", as: "Produits" });
+      Approvisionnement.belongsTo(models.Fournisseur, {
+        foreignKey: "fournisseurId",
+        as: "fournisseur"
+      });
+      Approvisionnement.hasMany(models.ApprovisionnementProduit, {
+        foreignKey: "approvisionnementId",
+        as: "lignes"
+      });
     }
   }
-  Fournisseur.init({
-    nom: DataTypes2.STRING,
-    contact: DataTypes2.STRING
-  }, {
-    sequelize: sequelize2,
-    modelName: "Fournisseur"
-  });
+  Approvisionnement.init(
+    {
+      date: DataTypes.DATE,
+      fournisseurId: DataTypes.INTEGER,
+      remarque: DataTypes.TEXT
+    },
+    {
+      sequelize: sequelize2,
+      modelName: "Approvisionnement"
+    }
+  );
+  return Approvisionnement;
+};
+
+// src/database/models/approvisionnementproduit.js
+var approvisionnementproduit_default = (sequelize2) => {
+  class ApprovisionnementProduit extends Model {
+    static associate(models) {
+      ApprovisionnementProduit.belongsTo(models.Approvisionnement, {
+        foreignKey: "approvisionnementId",
+        as: "approvisionnement"
+      });
+      ApprovisionnementProduit.belongsTo(models.Produit, {
+        foreignKey: "produitId",
+        as: "produit"
+      });
+    }
+  }
+  ApprovisionnementProduit.init(
+    {
+      approvisionnementId: DataTypes.INTEGER,
+      produitId: DataTypes.INTEGER,
+      quantite: DataTypes.INTEGER,
+      prix_unitaire: DataTypes.FLOAT
+    },
+    {
+      sequelize: sequelize2,
+      modelName: "ApprovisionnementProduit"
+    }
+  );
+  return ApprovisionnementProduit;
+};
+
+// src/database/models/fournisseur.js
+var fournisseur_default = (sequelize2) => {
+  class Fournisseur extends Model {
+    static associate(models) {
+      Fournisseur.hasMany(models.Approvisionnement, {
+        foreignKey: "fournisseurId",
+        as: "approvisionnements"
+      });
+    }
+  }
+  Fournisseur.init(
+    {
+      nom: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      contact: {
+        type: DataTypes.STRING,
+        allowNull: true
+      }
+    },
+    {
+      sequelize: sequelize2,
+      modelName: "Fournisseur"
+    }
+  );
   return Fournisseur;
 };
 
@@ -68666,6 +68748,8 @@ db.Stock = stock_default(sequelize, lib_default.DataTypes);
 db.Fournisseur = fournisseur_default(sequelize, lib_default.DataTypes);
 db.Vente = vente_default(sequelize, lib_default.DataTypes);
 db.Ventedetail = ventedetail_default(sequelize, lib_default.DataTypes);
+db.Approvisionnement = approvisionnement_default(sequelize, lib_default.DataTypes);
+db.ApprovisionnementProduit = approvisionnementproduit_default(sequelize, lib_default.DataTypes);
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
@@ -68688,12 +68772,6 @@ var ProduitService = class {
           attributes: ["nom"]
         },
         {
-          model: models_default.Fournisseur,
-          as: "fournisseur",
-          required: false,
-          attributes: ["nom"]
-        },
-        {
           model: models_default.Stock,
           as: "stock",
           required: false,
@@ -68707,11 +68785,10 @@ var ProduitService = class {
         "prix",
         "image",
         "categorieId",
-        "fournisseurId",
         "seuilAlerte",
         [models_default.Sequelize.fn("SUM", models_default.Sequelize.col("stock.quantite")), "totalQuantite"]
       ],
-      group: ["Produit.id", "categorie.id", "fournisseur.id"]
+      group: ["Produit.id", "categorie.id"]
     });
   }
   async createProduit(data, imagePath, transaction) {
@@ -68721,16 +68798,28 @@ var ProduitService = class {
       description: data.description || "",
       image: imagePath,
       qte: data.qte,
-      fournisseurId: data.fournisseurId,
+      seuilAlerte: data.seuilAlerte,
       categorieId: data.categorieId
     }, { transaction });
     const quantiteInitiale = data.qte ? parseInt(data.qte, 10) : 0;
-    await models_default.Stock.create({
-      produitId: produit.id,
-      quantite: quantiteInitiale,
-      date_stock: /* @__PURE__ */ new Date(),
-      type: "ENTR\xC9E"
-    }, { transaction });
+    if (quantiteInitiale > 0) {
+      await models_default.Stock.create({
+        produitId: produit.id,
+        quantite: quantiteInitiale,
+        date_stock: /* @__PURE__ */ new Date(),
+        type_mouvement: "ENTREE"
+      }, { transaction });
+      const approvisionnement = await models_default.Approvisionnement.create({
+        date: /* @__PURE__ */ new Date(),
+        fournisseurId: data.fournisseurId
+      }, { transaction });
+      await models_default.ApprovisionnementProduit.create({
+        produitId: produit.id,
+        quantite: quantiteInitiale,
+        approvisionnementId: approvisionnement.id,
+        prix_unitaire: data.prix
+      }, { transaction });
+    }
     return produit;
   }
   async getProduitById(id) {
@@ -68808,6 +68897,7 @@ var ProduitController = class {
     } catch (error) {
       await transaction.rollback();
       if (error instanceof models_default.Sequelize.ValidationError) {
+        console.error("Erreur de validation :", error);
         return res.status(400).json({
           message: "Erreur de validation",
           errors: error.errors.map((err) => ({
@@ -69085,8 +69175,8 @@ var VenteController_default = new VenteController();
 
 // src/routes/vente.js
 var router3 = Router3();
-router3.get("/Ventes", VenteController_default.getAll);
-router3.post("/Vente/create", VenteController_default.create);
+router3.get("/ventes", VenteController_default.getAll);
+router3.post("/ventes", VenteController_default.create);
 var vente_default2 = router3;
 
 // src/routes/stock.js
@@ -69201,14 +69291,116 @@ router5.put("/categories/:id", categorieController_default.update);
 router5.delete("/categories/:id", categorieController_default.delete);
 var categorie_default2 = router5;
 
-// src/routes/index.js
+// src/routes/achat.js
+import { Router as Router6 } from "express";
+
+// src/services/AchatService.js
+var AchatService = class {
+  async getAllAchat() {
+    return await models_default.Approvisionnement.findAll({
+      include: [
+        {
+          model: models_default.Fournisseur,
+          as: "fournisseur"
+        },
+        {
+          model: models_default.ApprovisionnementProduit,
+          as: "lignes",
+          include: [
+            {
+              model: models_default.Produit,
+              as: "produit",
+              include: [
+                {
+                  model: models_default.Categorie,
+                  as: "categorie"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      order: [["createdAt", "DESC"]]
+    });
+  }
+  async createAchat(product) {
+    console.log(product);
+    const transaction = await models_default.sequelize.transaction();
+    try {
+      const approvisionnement = await models_default.Approvisionnement.create({
+        date: /* @__PURE__ */ new Date(),
+        fournisseurId: product.fournisseurId,
+        remarque: product.remarque
+      }, { transaction });
+      await models_default.ApprovisionnementProduit.create({
+        approvisionnementId: approvisionnement.id,
+        produitId: product.produitId,
+        quantite: product.quantite,
+        prix_unitaire: product.prixUnitaire
+      }, { transaction });
+      const stock = await models_default.Stock.create({
+        produitId: product.produitId,
+        quantite: product.quantite,
+        date_stock: /* @__PURE__ */ new Date(),
+        type_mouvement: "ENTR\xC9E"
+      }, { transaction });
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw new Error(error);
+    }
+  }
+  async updateVente(id, data) {
+    const vente = await models_default.Vente.findByPk(id);
+    if (!vente) throw new Error("Vente introuvable");
+    return await vente.update(data);
+  }
+  async deleteVente(id) {
+    const vente = await models_default.Vente.findByPk(id);
+    if (!vente) throw new Error("Vente introuvable");
+    await vente.destroy();
+  }
+};
+var AchatService_default = new AchatService();
+
+// src/controllers/AchatController.js
+var AchatController = class {
+  async getAll(req2, res) {
+    try {
+      const ventes = await AchatService_default.getAllAchat();
+      res.status(200).json(ventes);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur lors de la r\xE9cup\xE9ration des achats" });
+    }
+  }
+  async create(req2, res) {
+    try {
+      const created = await AchatService_default.createAchat(req2.body);
+      res.status(201).json({ message: "Ventes cr\xE9\xE9es avec succ\xE8s", data: created });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+};
+var AchatController_default = new AchatController();
+
+// src/routes/achat.js
 var router6 = Router6();
-router6.use("/", produit_default2);
-router6.use("/", fournisseur_default2);
-router6.use("/", vente_default2);
-router6.use("/", stock_default2);
-router6.use("/", categorie_default2);
-var routes_default = router6;
+router6.get("/achats", AchatController_default.getAll);
+router6.post("/achats", AchatController_default.create);
+var achat_default = router6;
+
+// src/routes/index.js
+var router7 = Router7();
+router7.use("/", produit_default2);
+router7.use("/", fournisseur_default2);
+router7.use("/", vente_default2);
+router7.use("/", stock_default2);
+router7.use("/", categorie_default2);
+router7.use("/", achat_default);
+var routes_default = router7;
 
 // src/app.js
 import path2 from "path";

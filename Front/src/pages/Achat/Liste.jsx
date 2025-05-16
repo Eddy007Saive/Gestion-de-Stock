@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getProduits,createStock } from "@/services";
+import { getProduits,createAchat,getFournisseurs } from "@/services";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -27,6 +27,8 @@ export function ListeApprovisionnement() {
   const [quantite, setQuantite] = useState(1);
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
   const [sortConfig, setSortConfig] = useState({ key: 'nom', direction: 'ascending' });
+  const [fournisseurs, setFournisseurs] = useState([]);
+  const [formData, setFormData] = useState({ fournisseurId: "" });
 
   // Récupération des données
   useEffect(() => {
@@ -37,7 +39,9 @@ export function ListeApprovisionnement() {
     setLoading(true);
     try {
       const response = await getProduits();
+      const fournisseurs = await getFournisseurs();
       setProduits(response.data);
+      setFournisseurs(fournisseurs.data);
     } catch (error) {
       console.error("Erreur lors du chargement des produits:", error);
       setNotification({
@@ -49,6 +53,15 @@ export function ListeApprovisionnement() {
       setLoading(false);
     }
   };
+
+  // Gestion des changements de fournisseur
+  const handleFournisseurChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
 
   // Logique de tri
   const requestSort = (key) => {
@@ -73,8 +86,7 @@ export function ListeApprovisionnement() {
   // Filtrage par recherche
   const filteredProduits = sortedProduits.filter(produit =>
     produit.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    produit.categorie.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    produit.fournisseur.nom.toLowerCase().includes(searchTerm.toLowerCase())
+    produit.categorie.nom.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Produits nécessitant un approvisionnement
@@ -93,9 +105,11 @@ export function ListeApprovisionnement() {
   const handleSubmitApprovisionnement = async () => {
     try {
 
-        const response=await createStock({
+        const response=await createAchat({
         produitId:selectedProduit.id,
-        quantite:parseInt(quantite)
+        quantite:parseInt(quantite),
+        fournisseurId:formData.fournisseurId,
+        prixUnitaire:selectedProduit.prix
       })
 
       
@@ -211,7 +225,7 @@ export function ListeApprovisionnement() {
             <table className="w-full min-w-[640px] table-auto">
               <thead>
                 <tr>
-                  {["nom", "prix", "stockActuel", "seuilAlerte", "categorie", "fournisseur", "Actions"].map((col) => (
+                  {["nom", "prix", "stockActuel", "seuilAlerte", "categorie", "Actions"].map((col) => (
                     <th
                       key={col}
                       className="border-b border-blue-gray-50 py-3 px-5 text-left cursor-pointer"
@@ -249,7 +263,7 @@ export function ListeApprovisionnement() {
                     </td>
                   </tr>
                 ) : (
-                  filteredProduits.map(({ id, nom, prix, totalQuantite, seuilAlerte, categorie, fournisseur }, key) => {
+                  filteredProduits.map(({ id, nom, prix, totalQuantite, seuilAlerte, categorie }, key) => {
                     const className = `py-3 px-5 ${
                       key === produits.length - 1 ? "" : "border-b border-blue-gray-50"
                     }`;
@@ -291,15 +305,11 @@ export function ListeApprovisionnement() {
                             {categorie.nom}
                           </Typography>
                         </td>
-                        <td className={className}>
-                          <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {fournisseur.nom}
-                          </Typography>
-                        </td>
+                       
                         <td className={className}>
                           <div className="flex gap-2">
                             <button
-                              onClick={() => handleOpenApprovisionnement({ id, nom, prix, totalQuantite, seuilAlerte, categorie, fournisseur })}
+                              onClick={() => handleOpenApprovisionnement({ id, nom, prix, totalQuantite, seuilAlerte, categorie })}
                               className={`px-3 py-1 rounded text-white text-xs ${needsRestock ? "bg-red-500" : "bg-blue-gray-500"}`}
                             >
                               Approvisionner
@@ -343,7 +353,6 @@ export function ListeApprovisionnement() {
                   </div>
                   <div>
                     <p className="font-semibold text-blue-800">{selectedProduit.nom}</p>
-                    <p className="text-sm text-blue-600">Fournisseur: {selectedProduit.fournisseur.nom}</p>
                   </div>
                 </div>
                 
@@ -357,6 +366,25 @@ export function ListeApprovisionnement() {
                     <p className="text-lg font-bold text-gray-700">{selectedProduit.seuilAlerte}</p>
                   </div>
                 </div>
+
+                    <div>
+              <label className="block mb-2 text-sm font-medium">Fournisseur</label>
+              <select
+                  name="fournisseurId"
+                  id="fournisseurId"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  onChange={handleFournisseurChange}
+                  value={formData.fournisseurId}
+                >
+                  <option value="">Sélectionner un fournisseur</option>
+                  {fournisseurs.map((fournisseur) => (
+                    <option key={fournisseur.id} value={fournisseur.id}>
+                      {fournisseur.nom}
+                    </option>
+                  ))}
+                </select>
+                  </div>
+
                 
                 <div className="mt-2">
                   <label htmlFor="quantite" className="block text-sm font-medium text-gray-700 mb-1">
