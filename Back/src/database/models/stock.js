@@ -17,7 +17,6 @@ export default (sequelize) => {
         allowNull: false,
         validate: {
           isInt: true,
-          min: 1
         }
       },
       produitId: {

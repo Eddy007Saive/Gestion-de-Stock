@@ -13,8 +13,16 @@ class VenteController {
 
     async create(req, res) {
         try {
-            const created = await VenteService.createVentes(req.body);
-            res.status(201).json({ message: "Ventes créées avec succès", data: created });
+            const pdf = await VenteService.createVentes(req.body,res);
+             // Renvoyer le PDF en réponse HTTP
+            res.set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition':`attachment; filename=facture.pdf`,
+                'Content-Length':pdf.length
+
+            })
+            res.end(pdf);
+
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: error.message });

@@ -14,7 +14,9 @@ class StockService {
       where: { produitId, type_mouvement: 'SORTIE' },
     });
 
-    if (!entrees && !sorties) return null;
+    if (!entrees && !sorties) {
+      throw new Error(`Produit non trouvé en stock`);
+    }
 
     return entrees - Math.abs(sorties);
   }

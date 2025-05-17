@@ -1,5 +1,7 @@
 import db from "@/database/models";
 import StockService from "@/services/StockService";
+import path from 'path';
+import PdfService from "@/services/PdfService";
 
 class VenteService {
     async getAllVentes() {
@@ -27,21 +29,22 @@ class VenteService {
         ]
     });
 }
-    async createVentes(products) {
+    async createVentes(products,res) {
+
         const transaction = await db.sequelize.transaction();
         try {
             for (const produit of products) {
-                const stockActuel = await StockService.getStockRestant(req.params.produitId);
+                const stockActuel = await StockService.getStockRestant(produit.produitId);
                 
 
-                if (!entrees && !sorties) {
-                    throw new Error(`Produit ID ${produit.produitId} non trouvé en stock`);
-                }
+               
 
                 if (stockActuel < produit.quantite) {
                     throw new Error(`Stock insuffisant pour le produit ${produit.nom}`);
                 }
             }
+            
+            let lastVenteId = null;
 
             const createdVentesDetails = await Promise.all(products.map(async (produit) => {
                 await db.Stock.create({
@@ -55,18 +58,25 @@ class VenteService {
 
                 const vente = await db.Vente.create(produitCopie, { transaction });
 
+                lastVenteId=vente.id;
+
                 const venteDetails = { ...produit, venteId: vente.id };
 
                 return await db.Ventedetail.create(venteDetails, { transaction });
             }));
 
             await transaction.commit();
+            let  pdf=null;
 
-            return createdVentesDetails;
+            if (res && lastVenteId) {
+                pdf= this.printFacture(lastVenteId, res);
+            }
+
+            return pdf;
 
         } catch (error) {
             await transaction.rollback();
-            throw error;
+            throw new Error(error);
         }
     }
 
@@ -80,6 +90,99 @@ class VenteService {
         const vente = await db.Vente.findByPk(id);
         if (!vente) throw new Error("Vente introuvable");
         await vente.destroy();
+    }
+
+    async printFacture(id, res) {
+        try {
+            const vente = await db.Vente.findByPk(id, {
+                include: [
+                    {
+                        model: db.Ventedetail,
+                        as: 'ventedetails',
+                        required: false,
+                        include: [
+                            {
+                                model: db.Produit,
+                                as: 'produit', 
+                                required: false,
+                                include: [
+                                    {
+                                        model: db.Categorie,
+                                        as: 'categorie', 
+                                        required: false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            });
+    
+            if (!vente) {
+                throw new Error(`Vente avec l'ID ${id} non trouvée`);
+            }
+    
+            // Calcul de la date d'échéance (30 jours après la date de vente)
+            const dateVente = new Date(vente.dateVente || Date.now());
+            const dateEcheance = new Date(dateVente);
+            dateEcheance.setDate(dateEcheance.getDate() + 30);
+    
+            
+            // Construction des données pour le template
+            const factureData = {
+                // Informations de la facture
+                numFacture: `${vente.id}-${new Date().getFullYear()}`,
+                dateFacture: dateVente.toLocaleDateString('fr-FR'),
+                dateEcheance: dateEcheance.toLocaleDateString('fr-FR'),
+                
+                // Informations de l'entreprise
+                entreprise: {
+                    nom:  'VOTRE ENTREPRISE',
+                    adresse:'Adresse de l\'entreprise',
+                    ville:  'Ville',
+                    codePostal:'Code Postal',
+                    telephone:'Téléphone',
+                    email:'email@entreprise.com',
+                    siret:'SIRET de l\'entreprise'
+                },
+                
+                // Informations du client
+                client: {
+                    nom: vente.client?.nom || 'Client non spécifié',
+                    adresse: vente.client?.adresse || 'Adresse non spécifiée',
+                    ville: vente.client?.ville || 'Ville non spécifiée',
+                    codePostal: vente.client?.codePostal || '',
+                    email: vente.client?.email || '',
+                    siret: vente.client?.siret || ''
+                },
+                
+                // Informations de paiement
+                paiement: {
+                    iban: 'IBAN de l\'entreprise',
+                    bic:  'BIC de l\'entreprise',
+                    banque:  'Nom de la banque'
+                },
+                
+                // Lignes de facturation depuis les détails de vente
+                lignes: vente.ventedetails.map(detail => ({
+                    description: detail.produit?.nom || 'Produit inconnu',
+                    quantite: detail.quantite || 0,
+                    prixUnitaire: detail.prixUnitaire || detail.produit?.prixVente || 0
+                })),
+                
+                // Taux de TVA (en pourcentage)
+                tauxTVA:  20
+            };
+    
+            // Chemin vers le template HTML
+            const templatePath = path.join(process.cwd(), 'templates', 'facture.html');
+            
+            // Génération du PDF
+            return await PdfService.buildPDFFromTemplate(templatePath, factureData, res);
+        } catch (error) {
+            console.error('Erreur lors de la génération de la facture:', error);
+            res.status(500).send('Erreur lors de la génération de la facture');
+        }
     }
 }
 

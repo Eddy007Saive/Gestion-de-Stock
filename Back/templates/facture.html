@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture #{{numFacture}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .company-info {
+            width: 50%;
+        }
+        .company-info h1 {
+            color: #3366cc;
+            margin: 0;
+            font-size: 28px;
+        }
+        .invoice-details {
+            width: 40%;
+            text-align: right;
+        }
+        .invoice-details h2 {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .client-info {
+            margin-bottom: 30px;
+        }
+        .client-info h3 {
+            margin: 0 0 10px 0;
+            color: #3366cc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f7f7f7;
+        }
+        .right-align {
+            text-align: right;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+        .total-section {
+            margin-top: 20px;
+            margin-left: auto;
+            width: 300px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+        .grand-total {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 2px solid #333;
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="company-info">
+                <h1>{{nomEntreprise}}</h1>
+                <p>{{adresseEntreprise}}<br>
+                {{codePostalEntreprise}} {{villeEntreprise}}<br>
+                Tél : {{telephoneEntreprise}}<br>
+                Email : {{emailEntreprise}}<br>
+                SIRET : {{siretEntreprise}}</p>
+            </div>
+            <div class="invoice-details">
+                <h2>FACTURE</h2>
+                <p><strong>Numéro :</strong> {{numFacture}}</p>
+                <p><strong>Date :</strong> {{dateFacture}}</p>
+                <p><strong>Échéance :</strong> {{dateEcheance}}</p>
+            </div>
+        </div>
+
+        <div class="client-info">
+            <h3>FACTURER À</h3>
+            <p>{{nomClient}}<br>
+            {{adresseClient}}<br>
+            {{codePostalClient}} {{villeClient}}<br>
+            Email : {{emailClient}}<br>
+            SIRET : {{siretClient}}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th class="right-align">Montant HT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{lignesFacture}}
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            <div class="total-row">
+                <span>Total HT :</span>
+                <span>{{totalHT}} MGA</span>
+            </div>
+            <div class="total-row">
+                <span>TVA ({{tauxTVA}}%) :</span>
+                <span>{{montantTVA}} MGA</span>
+            </div>
+            <div class="total-row grand-total">
+                <span>Total TTC :</span>
+                <span>{{totalTTC}} MGA</span>
+            </div>
+        </div>
+
+        <div class="payment-info">
+            <h3>Informations de paiement</h3>
+            <p>
+                <strong>IBAN :</strong> {{iban}}<br>
+                <strong>BIC :</strong> {{bic}}<br>
+                <strong>Banque :</strong> {{banque}}
+            </p>
+            <p>Veuillez régler cette facture dans les 30 jours suivant la date d'émission.</p>
+        </div>
+
+        <div class="footer">
+            <p>{{nomEntreprise}} - SIRET : {{siretEntreprise}}<br>
+            Merci pour votre confiance !</p>
+        </div>
+    </div>
+</body>
+</html>

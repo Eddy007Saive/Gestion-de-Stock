@@ -18,7 +18,7 @@ async function  build(){
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
-    external: ['express', 'body-parser', 'path', 'fs', 'url', 'depd'],
+    external: ['express', 'body-parser', 'path', 'fs', 'url', 'depd','typescript' ],
     banner: {
       js: `
         import { createRequire } from 'module';
