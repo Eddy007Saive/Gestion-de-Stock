@@ -1,8 +1,10 @@
 import axios from "axios";
 
+
+
 // Configuration de base pour Axios
 const apiClient = axios.create({
-  baseURL: "http://localhost:3000/api/", 
+  baseURL: import.meta.env.REACT_APP_BASE_URL || "http://localhost:3000/api",
   timeout: 30000, 
   headers: {
     "Content-Type": "application/json", // Type de contenu par défaut

@@ -69,7 +69,6 @@ class PdfService {
         .replace('{{totalTTC}}', totalTTC.toFixed(2));
     }
 
-    console.log(html);
 
     // Générer le PDF via Puppeteer
     const browser = await puppeteer.launch();

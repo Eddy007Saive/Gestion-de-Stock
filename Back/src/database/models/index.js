@@ -8,7 +8,7 @@ import Categorie from '@/database/models/categorie.js';
 import Vente from '@/database/models/vente.js';
 import Ventedetail from '@/database/models/ventedetail.js';
 import Approvisionnement from '@/database/models/approvisionnement.js';
-import ApprovisionnementProduit from '@/database/models/approvisionnementproduit.js';
+import ApprovisionnementProduit from '@/database/models/approvisionnementProduit.js';
 
 
 

@@ -36,8 +36,8 @@ export function liste() {
 
                     Ventes
                     </span>
-                    <Link to="/dashboard/vente/nouveau">
-                        Nouveau Vente
+                    <Link to="/dashboard/nouveau/commande">
+                        Nouveau Commande
                     </Link>
                 </div>
               </Typography>
