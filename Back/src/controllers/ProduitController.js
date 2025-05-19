@@ -2,10 +2,30 @@ import ProduitService from "@/services/ProduitService.js";
 import db from "@/database/models";
 
 class ProduitController {
-    async getAll(req, res) {
+     async getAll(req, res) {
         try {
-            const produits = await ProduitService.getAllProduits();
-            res.json(produits);
+            // Récupération des paramètres de pagination depuis la requête
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const search = req.query.search || '';
+            const sortBy = req.query.sortBy || 'id';
+            const sortOrder = req.query.sortOrder || 'ASC';
+            // Appel du service avec les paramètres de pagination
+            const result = await ProduitService.getAllProduits({
+                page,
+                limit,
+                search,
+                sortBy,
+                sortOrder
+            });
+            console.log(result);
+            
+            res.json({
+                produits: result.rows,
+                totalItems: result.count,
+                totalPages: Math.ceil(result.count / limit),
+                currentPage: page
+            });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Erreur lors de la récupération des Produits" });
