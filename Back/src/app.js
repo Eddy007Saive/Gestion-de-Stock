@@ -1,7 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import router from './routes';
-import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get the equivalent of __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 
 const app = express();
@@ -22,7 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use('/api', router);
-app.use(express.static("../uploads") );
+app.use(express.static(join(__dirname, "public")));
 
 
 // Test route
@@ -34,4 +39,6 @@ app.get('/', (req, res) => {
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Serveur lancé sur http://localhost:${PORT}`);
+  console.log(join(__dirname, "public"))
+
 });

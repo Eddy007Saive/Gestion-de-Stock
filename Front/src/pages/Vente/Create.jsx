@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useCallback } from "react";
 import { getProduits } from "@/services/Produit";
 import { getStock } from "@/services/Stock";
 import { useForm, FormProvider } from "react-hook-form";
@@ -28,14 +28,14 @@ export function Create() {
   }, []);
 
 
-  const getStockProduit = async (id) => {
+  const getStockProduit = useCallback(async (id) => {
     try {
       const response = await getStock(id)
       return response.stockRestant;
     } catch (error) {
       toastify.error("Erreur lors de la récupération du stock")
     }
-  }
+  })
 
 
   const fetchProduits = async () => {
@@ -293,6 +293,7 @@ export function Create() {
                         onClick={() => deleteProdInPanier(item.produitId)}
                         className="text-red-500 hover:text-red-700 transition"
                         title="Supprimer"
+                        aria-label="Supprimer le produit"
                       >
                         <TrashIcon className="h-5 w-5" />
                       </button>

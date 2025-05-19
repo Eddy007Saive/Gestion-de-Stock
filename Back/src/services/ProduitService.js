@@ -87,13 +87,7 @@ async createProduit(data, imagePath, transaction) {
                     as: 'categorie',
                     required: false,
                     attributes: ['nom'],
-                },
-                {
-                    model: db.Fournisseur,
-                    as: 'fournisseur',
-                    required: false,
-                    attributes: ['nom'],
-                },
+                }      
             ],
 
             attributes: [
@@ -103,11 +97,10 @@ async createProduit(data, imagePath, transaction) {
                 'prix',
                 'image',
                 'categorieId',
-                'fournisseurId',
                 'seuilAlerte',
                 [db.Sequelize.fn('SUM', db.Sequelize.col('stock.quantite')), 'totalQuantite']
             ],
-            group: ['Produit.id', 'categorie.id', 'fournisseur.id']
+            group: ['Produit.id', 'categorie.id']
         });
     }
 
