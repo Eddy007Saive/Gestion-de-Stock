@@ -2,7 +2,17 @@ import apiClient from "@/utils/ApiClient";
 const url="/produits"
 
 // Fonction pour récupérer tous les utilisateurs
-export const getProduits = () => apiClient.get(`${url}`);
+export const getProduits = ({ page = 1, limit = 10, search = "", sortBy = "id", sortOrder = "ASC" } = {}) => {
+  return apiClient.get(url, {
+    params: {
+      page,
+      limit,
+      search,
+      sortBy,
+      sortOrder
+    }
+  });
+};
 
 export const findProduit =async  (id) =>{
     try {
