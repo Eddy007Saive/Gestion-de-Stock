@@ -22,6 +22,25 @@ export const findProduit =async  (id) =>{
         console.log(error);
     }
 }
+
+// Fonction pour importer un fichier CSV ou XLSX
+export const importFile = async (file, config) => {
+    try {
+        const response = await apiClient.post(`${url}/upload`, file, config);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            // Erreur provenant du serveur avec un code d'état HTTP
+            throw new Error(error.response.data.message || "Une erreur s'est produite lors de l'importation du fichier");
+        } else if (error.request) {
+            // Erreur de requête (ex: pas de réponse du serveur)
+            throw new Error("Aucune réponse du serveur. Veuillez vérifier votre connexion.");
+        } else {
+            // Autres erreurs (ex: erreur de configuration)
+            throw new Error(error);
+        }
+    }
+};
 // Fonction pour créer un utilisateur
 export const createProduit = async (data, config) => {
     try {

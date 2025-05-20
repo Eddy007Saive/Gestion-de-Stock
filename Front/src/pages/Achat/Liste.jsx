@@ -16,6 +16,7 @@ import {
   CheckCircle,
   X
 } from "lucide-react";
+import Pagination from "@/components/Pagination";
 
 // Composant principal pour la liste d'approvisionnement
 export function ListeApprovisionnement() {
@@ -29,19 +30,41 @@ export function ListeApprovisionnement() {
   const [sortConfig, setSortConfig] = useState({ key: 'nom', direction: 'ascending' });
   const [fournisseurs, setFournisseurs] = useState([]);
   const [formData, setFormData] = useState({ fournisseurId: "" });
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [sortBy, setSortBy] = useState("id");
+  const [sortOrder, setSortOrder] = useState("ASC");
+  
 
   // Récupération des données
   useEffect(() => {
     fetchData();
-  }, []);
+  },[currentPage, limit, sortBy, sortOrder]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await getProduits();
+      const response = await getProduits({
+                page: currentPage,
+                limit,
+                search,
+                sortBy,
+                sortOrder
+      });
+
       const fournisseurs = await getFournisseurs();
-      setProduits(response.data);
+
+      setProduits(response.data.produits);
+
       setFournisseurs(fournisseurs.data);
+
+      setTotalItems(response.data.totalItems);
+
+      setTotalPages(response.data.totalPages);
+
     } catch (error) {
       console.error("Erreur lors du chargement des produits:", error);
       setNotification({
@@ -53,6 +76,18 @@ export function ListeApprovisionnement() {
       setLoading(false);
     }
   };
+
+  
+        // Gestionnaire de changement de page pour le composant Pagination
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    // Gestionnaire de changement de limite par page pour le composant Pagination
+    const handleLimitChange = (newLimit) => {
+        setLimit(newLimit);
+        setCurrentPage(1); 
+    };
 
   // Gestion des changements de fournisseur
   const handleFournisseurChange = (e) => {
@@ -331,6 +366,16 @@ export function ListeApprovisionnement() {
             </table>
           )}
         </CardBody>
+        {/* Pagination */}
+          <Pagination 
+           currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            limit={limit}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            itemName="produits"
+          />
       </Card>
 
       {/* Modal d'approvisionnement */}

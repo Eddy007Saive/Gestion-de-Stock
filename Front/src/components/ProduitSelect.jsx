@@ -11,10 +11,10 @@ const ProduitSelect = ({ onSelectChange }) => {
       try {
         // Remplace cette requête par celle qui récupère tous les employés
         const response = await getProduits();
-        console.log(response.data);
+        let produits=response.data.produits;
 
         // Formatage des options pour react-select
-        const formattedOptions = response.data.map((prod) => ({
+        const formattedOptions = produits.map((prod) => ({
           id: prod.id,
           label: prod.nom,
           prix:prod.prix

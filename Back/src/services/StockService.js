@@ -35,6 +35,33 @@ class StockService {
     return stock;
   }
 
+     /**
+     * Crée ou met à jour plusieurs un stock 
+     * @param {int} produitId - identifiant du produit
+     * @param {int} qte - quantité à ajouter
+     * @param {object} transaction - transaction Sequelize
+     * @returns {void} Résultats de l insertion
+     */
+  async createOrUpdateStock(produitId, qte, transaction) {
+    const stock = await db.Stock.findOne({ where: { produitId }, transaction });
+
+    if (stock) {
+      const newQuantity = (Number(qte) || 0) + (Number(stock.quantite) || 0);
+      await stock.update({
+        quantite: newQuantity,
+        date_stock: new Date(),
+        type_mouvement: "ENTREE"
+      }, { transaction });
+    } else {
+      await db.Stock.create({
+        produitId,
+        quantite: qte,
+        date_stock: new Date(),
+        type_mouvement: "ENTREE"
+      }, { transaction });
+    }
+  }
+
 }
 
 export default new StockService();

@@ -5,7 +5,6 @@ import PdfService from "@/services/PdfService";
 
 class VenteService {
     async getAllVentes(options = {}) {
-
         const { page = 1, limit = 10, search = '', sortBy = 'id', sortOrder = 'ASC' } = options;
 
         // Calcul de l'offset pour la pagination
@@ -15,16 +14,18 @@ class VenteService {
         const whereClause = search
             ? {
                 [db.Sequelize.Op.or]: [
-                    { 'client.nom': { [db.Sequelize.Op.like]: `%${search}%` } },
-                    { 'produit.nom': { [db.Sequelize.Op.like]: `%${search}%` } }
+                    { '$client.nom$': { [db.Sequelize.Op.like]: `%${search}%` } },
+                    { '$ventedetails.produit.nom$': { [db.Sequelize.Op.like]: `%${search}%` } }
                 ]
             }
             : {};
+
         // Validation des paramètres de tri pour éviter les injections SQL
-        const validSortColumns = ['id', 'nom', 'prix', 'seuilAlerte', 'totalQuantite', 'createdAt', 'updatedAt'];
+        const validSortColumns = ['id', 'nom', 'prix', 'seuilAlerte', 'totalQuantite', 'totalPrix', 'createdAt', 'updatedAt'];
         const validSortOrders = ['ASC', 'DESC'];
         const orderBy = validSortColumns.includes(sortBy) ? sortBy : 'id';
         const orderDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'ASC';
+
         // Configuration des options pour findAndCountAll
         const queryOptions = {
             where: whereClause,
@@ -38,7 +39,7 @@ class VenteService {
                             model: db.Produit,
                             as: 'produit',
                             required: false,
-                            attributes: ['nom'],
+                            attributes: ['nom']
                         }
                     ]
                 }
@@ -46,23 +47,23 @@ class VenteService {
             attributes: [
                 'id',
                 'dateVente',
-                'clientId'
+                [db.Sequelize.literal('(SELECT SUM(quantite) FROM ventedetails WHERE ventedetails.venteId = Vente.id)'), 'totalQuantite'],
+                [db.Sequelize.literal('(SELECT SUM(quantite * prix) FROM ventedetails WHERE ventedetails.venteId = Vente.id)'), 'totalPrix']
             ],
-            order: [[orderBy === 'totalQuantite' ? db.Sequelize.literal('totalQuantite') : orderBy, orderDirection]],
+            order: [[orderBy === 'totalQuantite' || orderBy === 'totalPrix' ? db.Sequelize.literal(orderBy) : orderBy, orderDirection]],
+            limit,
+            offset,
             distinct: true,
             subQuery: false
         };
 
-        // Récupération des ventes avec pagination
-        const result = await db.Vente.findAndCountAll(queryOptions);
+        // Exécution de la requête
+        const { count, rows } = await db.Vente.findAndCountAll(queryOptions);
 
-        const count = Array.isArray(result.count) ? result.count.length : result.count;
-       
         return {
-            rows: result.rows,
+            rows: rows,
             count: count
         };
-
     }
     async createVentes(products, res) {
 

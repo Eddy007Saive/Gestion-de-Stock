@@ -41,7 +41,7 @@ export function Create() {
   const fetchProduits = async () => {
     try {
       const response = await getProduits();
-      setProduits(response.data);
+      setProduits(response.data.produits);
     } catch (error) {
       toastify.error("Erreur lors de la récupération des produits");
     }

@@ -11,6 +11,7 @@ import {
 } from "@material-tailwind/react";
 import { getProduits } from "@/services";
 import { Link } from "react-router-dom";
+import Pagination from "@/components/Pagination";
 
 export function liste() {
     // États pour les données et la pagination
@@ -60,11 +61,17 @@ export function liste() {
         fetchData();
     };
 
-    // Fonctions de navigation entre les pages
-    const goToPage = (page) => {
-        if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
-        }
+
+
+        // Gestionnaire de changement de page pour le composant Pagination
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    // Gestionnaire de changement de limite par page pour le composant Pagination
+    const handleLimitChange = (newLimit) => {
+        setLimit(newLimit);
+        setCurrentPage(1); 
     };
 
     // Fonction pour changer le tri
@@ -96,9 +103,14 @@ export function liste() {
                         <Typography variant="h6" color="white">
                             Produits
                         </Typography>
-                        <Link to="/dashboard/nouveau/produit" className="bg-white text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all">
-                            Nouveau Produit
-                        </Link>
+                        <div>
+                            <Link to="/dashboard/produit/import" className="bg-white text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all">
+                            Importer Produit
+                            </Link>
+                            <Link to="/dashboard/nouveau/produit" className="bg-white text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all">
+                                Nouveau Produit
+                            </Link>
+                        </div>
                     </div>
                 </CardHeader>
 
@@ -222,71 +234,15 @@ export function liste() {
                             </table>
 
                             {/* Pagination */}
-                            <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-                                <div className="flex items-center gap-2">
-                                    <Typography variant="small" className="text-blue-gray-600">
-                                        Afficher
-                                    </Typography>
-                                    <select
-                                        value={limit}
-                                        onChange={(e) => {
-                                            setLimit(Number(e.target.value));
-                                            setCurrentPage(1);
-                                        }}
-                                        className="rounded border border-blue-gray-200 p-1"
-                                    >
-                                        <option value={5}>5</option>
-                                        <option value={10}>10</option>
-                                        <option value={20}>20</option>
-                                        <option value={50}>50</option>
-                                    </select>
-                                    <Typography variant="small" className="text-blue-gray-600">
-                                        par page | Total: {totalItems} produits
-                                    </Typography>
-                                </div>
-
-                                <div className="flex gap-2">
-                                    <IconButton
-                                        variant="outlined"
-                                        color="blue-gray"
-                                        disabled={currentPage <= 1}
-                                        onClick={() => goToPage(1)}
-                                    >
-                                        {"<<"}
-                                    </IconButton>
-                                    <IconButton
-                                        variant="outlined"
-                                        color="blue-gray"
-                                        disabled={currentPage <= 1}
-                                        onClick={() => goToPage(currentPage - 1)}
-                                    >
-                                        {"<"}
-                                    </IconButton>
-                                    
-                                    <div className="flex items-center gap-1">
-                                        <Typography variant="small" className="text-blue-gray-600">
-                                            Page {currentPage} sur {totalPages}
-                                        </Typography>
-                                    </div>
-
-                                    <IconButton
-                                        variant="outlined"
-                                        color="blue-gray"
-                                        disabled={currentPage >= totalPages}
-                                        onClick={() => goToPage(currentPage + 1)}
-                                    >
-                                        {">"}
-                                    </IconButton>
-                                    <IconButton
-                                        variant="outlined"
-                                        color="blue-gray"
-                                        disabled={currentPage >= totalPages}
-                                        onClick={() => goToPage(totalPages)}
-                                    >
-                                        {">>"}
-                                    </IconButton>
-                                </div>
-                            </div>
+                             <Pagination 
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                totalItems={totalItems}
+                                limit={limit}
+                                onPageChange={handlePageChange}
+                                onLimitChange={handleLimitChange}
+                                itemName="produits"
+                            />
                         </>
                     )}
                 </CardBody>

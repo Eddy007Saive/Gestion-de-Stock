@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Dashboard, Auth } from "@/layouts";
 import { Home } from "@/pages/dashboard";
-import { Create as NewProduit ,liste as Produit,Update as UpdateProduct} from "@/pages/Produit";
+import { Create as NewProduit ,liste as Produit,Update as UpdateProduct,ImportProduits} from "@/pages/Produit";
 import { Create as NewFournisseur,liste as Fournisseur,Update as UpdateFournisseur } from "@/pages/Fournisseur";
 import { Create as NewCommande , liste as Commande } from "@/pages/Vente";
 import { Create as NewCategorie,liste as Category ,Update as UpdateCategory } from "@/pages/Categorie";
@@ -22,6 +22,8 @@ export function AppRoute() {
         <Route path="produit" element={<Produit />} />
         <Route path="nouveau/produit" element={<NewProduit />} />
         <Route path="modifier/produit/:id" element={<UpdateProduct />} />
+        <Route path="produit/import" element={<ImportProduits />} />
+
 
 
         <Route path="nouveau/fournisseur" element={<NewFournisseur />} />

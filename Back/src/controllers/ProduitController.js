@@ -2,7 +2,7 @@ import ProduitService from "@/services/ProduitService.js";
 import db from "@/database/models";
 
 class ProduitController {
-     async getAll(req, res) {
+    async getAll(req, res) {
         try {
             // Récupération des paramètres de pagination depuis la requête
             const page = parseInt(req.query.page) || 1;
@@ -19,7 +19,7 @@ class ProduitController {
                 sortOrder
             });
             console.log(result);
-            
+
             res.json({
                 produits: result.rows,
                 totalItems: result.count,
@@ -93,6 +93,25 @@ class ProduitController {
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Erreur lors de la suppression du Produit" });
+        }
+    }
+
+    async importCsvOrXlsx(req, res) {
+        const transaction = await db.sequelize.transaction();
+
+        try {
+            const file = req.file;
+             const mapping = req.body.mapping ? JSON.parse(req.body.mapping) : null;
+            if (!file) {
+                return res.status(400).json({ message: "Aucun fichier fourni" });
+            }
+            const result = await ProduitService.importCsvOrXlsx(file,mapping,transaction);
+            transaction.commit();
+            res.status(201).json({ message: "Produits importés avec succès", result });
+        } catch (error) {
+            transaction.rollback();
+            console.error(error);
+            res.status(500).json({ message: "Erreur lors de l'importation des Produits" });
         }
     }
 }
