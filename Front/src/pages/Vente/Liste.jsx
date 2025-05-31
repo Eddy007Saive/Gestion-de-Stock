@@ -73,13 +73,13 @@ export function liste() {
                             <div className="flex items-center gap-4">
                               {/* <Avatar src={img} alt={name} size="sm" variant="rounded" /> */}
                               <div>
-                                <Typography
-                                  variant="small"
-                                  color="blue-gray"
-                                  className="font-semibold"
-                                >
-                                  {vente.date}
-                                </Typography>
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-semibold"
+                              >
+                                {new Date(vente.dateVente).toLocaleDateString('fr-FR')}
+                              </Typography>
         
                               </div>
                             </div>
