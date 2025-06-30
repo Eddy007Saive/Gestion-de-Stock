@@ -26,15 +26,9 @@ class PdfService {
       // Informations du client
       .replace('{{nomClient}}', data.client.nom)
       .replace('{{adresseClient}}', data.client.adresse)
-      .replace('{{villeClient}}', data.client.ville)
-      .replace('{{codePostalClient}}', data.client.codePostal)
-      .replace('{{emailClient}}', data.client.email)
-      .replace('{{siretClient}}', data.client.siret)
+      .replace('{{telephoneClient}}', data.client.telephone)
       
-      // Informations de paiement
-      .replace('{{iban}}', data.paiement.iban)
-      .replace('{{bic}}', data.paiement.bic)
-      .replace('{{banque}}', data.paiement.banque);
+   
 
     // Injecter les lignes de la facture dynamiquement
     let lignesFacture = '';
@@ -49,8 +43,8 @@ class PdfService {
           <tr>
             <td>${ligne.description}</td>
             <td>${ligne.quantite}</td>
-            <td>${ligne.prixUnitaire.toFixed(2)} €</td>
-            <td class="right-align">${montantLigne.toFixed(2)} €</td>
+            <td>${ligne.prixUnitaire.toFixed(2)} MGA</td>
+            <td class="right-align">${montantLigne.toFixed(2)} MGA</td>
           </tr>
         `;
       });
@@ -69,7 +63,6 @@ class PdfService {
         .replace('{{totalTTC}}', totalTTC.toFixed(2));
     }
 
-    console.log(html);
 
     // Générer le PDF via Puppeteer
     const browser = await puppeteer.launch();

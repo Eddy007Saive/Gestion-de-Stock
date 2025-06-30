@@ -1,8 +1,10 @@
 import axios from "axios";
 
+
+
 // Configuration de base pour Axios
 const apiClient = axios.create({
-  baseURL: "http://localhost:3000/api/", 
+  baseURL: import.meta.env.REACT_APP_BASE_URL || "http://localhost:3000/api",
   timeout: 30000, 
   headers: {
     "Content-Type": "application/json", // Type de contenu par défaut
@@ -12,14 +14,14 @@ const apiClient = axios.create({
 // Intercepteur pour ajouter un token d'authentification (si nécessaire)
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // Récupère un token si stocké dans localStorage
+    const token = localStorage.getItem("token"); 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`; // Ajoute le token dans les headers
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => {
-    return Promise.reject(error); // Rejette les erreurs de configuration
+    return Promise.reject(error); 
   }
 );
 

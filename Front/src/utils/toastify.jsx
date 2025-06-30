@@ -45,10 +45,34 @@ const notifyWarning = (message) => {
   });
 };
 
+
+let loadingToastId = null;
+
+const load = (message) => {
+  loadingToastId = toast.loading(message, {
+    position: "top-right",
+    autoClose: false,  // Important : on désactive l'auto-close pour gérer manuellement
+    hideProgressBar: true,
+    closeOnClick: false,
+    pauseOnHover: false,
+    draggable: false,
+  });
+  return loadingToastId;
+};
+
+const closeLoad = () => {
+  if (loadingToastId !== null) {
+    toast.dismiss(loadingToastId);
+    loadingToastId = null;
+  }
+};
+
 // Exporter les fonctions de notification
 export default {
   success: notifySuccess,
   error: notifyError,
   info: notifyInfo,
-  warning: notifyWarning
+  warning: notifyWarning,
+  loading: load,
+  closeLoad: closeLoad
 };

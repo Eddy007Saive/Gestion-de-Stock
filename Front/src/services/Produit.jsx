@@ -2,7 +2,17 @@ import apiClient from "@/utils/ApiClient";
 const url="/produits"
 
 // Fonction pour récupérer tous les utilisateurs
-export const getProduits = () => apiClient.get(`${url}`);
+export const getProduits = ({ page = 1, limit = 10, search = "", sortBy = "id", sortOrder = "ASC" } = {}) => {
+  return apiClient.get(url, {
+    params: {
+      page,
+      limit,
+      search,
+      sortBy,
+      sortOrder
+    }
+  });
+};
 
 export const findProduit =async  (id) =>{
     try {
@@ -12,6 +22,25 @@ export const findProduit =async  (id) =>{
         console.log(error);
     }
 }
+
+// Fonction pour importer un fichier CSV ou XLSX
+export const importFile = async (file, config) => {
+    try {
+        const response = await apiClient.post(`${url}/upload`, file, config);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            // Erreur provenant du serveur avec un code d'état HTTP
+            throw new Error(error.response.data.message || "Une erreur s'est produite lors de l'importation du fichier");
+        } else if (error.request) {
+            // Erreur de requête (ex: pas de réponse du serveur)
+            throw new Error("Aucune réponse du serveur. Veuillez vérifier votre connexion.");
+        } else {
+            // Autres erreurs (ex: erreur de configuration)
+            throw new Error(error);
+        }
+    }
+};
 // Fonction pour créer un utilisateur
 export const createProduit = async (data, config) => {
     try {

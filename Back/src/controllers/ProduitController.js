@@ -4,8 +4,27 @@ import db from "@/database/models";
 class ProduitController {
     async getAll(req, res) {
         try {
-            const produits = await ProduitService.getAllProduits();
-            res.json(produits);
+            // Récupération des paramètres de pagination depuis la requête
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const search = req.query.search || '';
+            const sortBy = req.query.sortBy || 'id';
+            const sortOrder = req.query.sortOrder || 'ASC';
+            // Appel du service avec les paramètres de pagination
+            const result = await ProduitService.getAllProduits({
+                page,
+                limit,
+                search,
+                sortBy,
+                sortOrder
+            });
+
+            res.json({
+                produits: result.rows,
+                totalItems: result.count,
+                totalPages: Math.ceil(result.count / limit),
+                currentPage: page
+            });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Erreur lors de la récupération des Produits" });
@@ -73,6 +92,25 @@ class ProduitController {
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Erreur lors de la suppression du Produit" });
+        }
+    }
+
+    async importCsvOrXlsx(req, res) {
+        const transaction = await db.sequelize.transaction();
+
+        try {
+            const file = req.file;
+             const mapping = req.body.mapping ? JSON.parse(req.body.mapping) : null;
+            if (!file) {
+                return res.status(400).json({ message: "Aucun fichier fourni" });
+            }
+            const result = await ProduitService.importCsvOrXlsx(file,mapping,transaction);
+            transaction.commit();
+            res.status(201).json({ message: "Produits importés avec succès", result });
+        } catch (error) {
+            transaction.rollback();
+            console.error(error);
+            res.status(500).json({ message: "Erreur lors de l'importation des Produits" });
         }
     }
 }

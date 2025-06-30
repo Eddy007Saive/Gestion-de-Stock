@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import AchatController from '@/controllers/AchatController';
 
+
 const router = Router();
 
 router.get("/achats", AchatController.getAll);

@@ -2,37 +2,81 @@ import db from "@/database/models";
 import StockService from "@/services/StockService";
 
 class AchatService {
-    async getAllAchat() {
-        return await db.Approvisionnement.findAll({
+    async getAllAchat(options = {}) {
+        const { page = 1, limit = 10, search = '', sortBy = 'id', sortOrder = 'ASC' } = options;
+
+        // Calcul de l'offset pour la pagination
+        const offset = (page - 1) * limit;
+
+
+        // Configuration des options de recherche
+        const whereClause = search
+            ? {
+                [db.Sequelize.Op.or]: [
+                    { 'fournisseur.nom': { [db.Sequelize.Op.like]: `%${search}%` } },
+                    { 'produit.nom': { [db.Sequelize.Op.like]: `%${search}%` } }
+                ]
+            }
+            : {};
+
+        // Validation des paramètres de tri pour éviter les injections SQL
+        const validSortColumns = ['id', 'nom', 'prix', 'seuilAlerte', 'totalQuantite', 'createdAt', 'updatedAt'];
+        const validSortOrders = ['ASC', 'DESC'];
+
+        const orderBy = validSortColumns.includes(sortBy) ? sortBy : 'id';
+        const orderDirection = validSortOrders.includes(sortOrder) ? sortOrder : 'ASC';
+
+        // Configuration des options pour findAndCountAll
+        const queryOptions = {
+            where: whereClause,
             include: [
                 {
                     model: db.Fournisseur,
-                    as: 'fournisseur'
+                    as: 'fournisseur',
+                    required: false,
+                    attributes: ['nom'],
                 },
                 {
                     model: db.ApprovisionnementProduit,
                     as: 'lignes',
+                    required: false,
                     include: [
                         {
                             model: db.Produit,
                             as: 'produit',
-                            include: [
-                                {
-                                    model: db.Categorie,
-                                    as: 'categorie'
-                                }
-                            ]
+                            required: false,
+                            attributes: ['nom'],
                         }
                     ]
                 }
             ],
-            order: [['createdAt', 'DESC']]
-        });
+            attributes: [
+                'id',
+                'date',
+                'fournisseurId',
+                'remarque'
+            ],
+            order: [[orderBy === 'totalQuantite' ? db.Sequelize.literal('totalQuantite') : orderBy, orderDirection]],
+            distinct: true,
+            subQuery: false
+        };
+        // Ajout des options de pagination
+        queryOptions.limit = limit;
+        queryOptions.offset = offset;
+
+        // Exécution de la requête avec pagination
+        const { count, rows } = await db.Approvisionnement.findAndCountAll(queryOptions);
+
+
+        return {
+            rows: rows, count: count
+        }
     }
 
+    
     async createAchat(product) {
-       console.log(product);
-       
+        console.log(product);
+
         const transaction = await db.sequelize.transaction();
         try {
             const approvisionnement = await db.Approvisionnement.create({
@@ -49,14 +93,14 @@ class AchatService {
             }, { transaction });
 
             await db.Stock.create({
-                  produitId:product.produitId,
-                  quantite: product.quantite,
-                  date_stock: new Date(),
-                  type_mouvement: "ENTRÉE",
-                },{transaction});
+                produitId: product.produitId,
+                quantite: product.quantite,
+                date_stock: new Date(),
+                type_mouvement: "ENTRÉE",
+            }, { transaction });
 
             await transaction.commit();
-            
+
         } catch (error) {
             await transaction.rollback();
             throw new Error(error);

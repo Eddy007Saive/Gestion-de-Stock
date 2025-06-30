@@ -50,8 +50,8 @@ export const routeS = [
       },
       {
         icon: <GlobeAltIcon {...icon} />,
-        name: "Stock",
-        path: "/voyage", // Chemin complet avec /dashboard
+        name: "Agent",
+        path: "/agent", // Chemin complet avec /dashboard
       },
     ],
   },
